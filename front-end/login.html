@@ -14,6 +14,10 @@
                 <p>密码：<input type="password" id="password" placeholder="请输入密码"></p>
             </div>
             <div>
+                <input  type="checkbox" id="remember">记住我
+            </div>
+            <div>
+                <br>
                 <input value="登录" type="submit" id="button">
                 <a href="register.html" >注册帐号</a>
             </div>        
@@ -21,33 +25,43 @@
             
     </form>
     <script>
+       
         $(document).ready(function(){
-            $("#button").click(function(){
+            $("#button").click(function(){                
                 var userName=$("#username").val();
                 var pass=$("#password").val();
                 if(userName==""||pass==""){
                     alert("账号和密码不能为空");
+                    return false;
                 }
                 else{
+                    
                     $.post("../back-end/login.php",
                        {                          
                            username:userName,
                            password:pass
                        },
                        function(data,status){
+                           
                            if(data.status){
-                               alert("登录成功");
+                               //alert("登录成功");
+                               sessionStorage.username=userName;
+                               window.location.href="index.html";
+
+
                            }
                            else{
                                alert("登录失败");
                            }
-                       }
-                       
-                    );
+                         
+                       },
+                       "json"                      
+                    );                  
+                return false;    
                 }               
             });
         });
-       
+
     </script>
     
 </div>
