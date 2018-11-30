@@ -9,7 +9,6 @@ function get_infor(){
        },
        "json"                      
     );
-    return j;
 }
 
 $(document).ready(function(){
@@ -19,10 +18,20 @@ $(document).ready(function(){
         get_infor();
         
     });
-
+    
     $("#alter-password").click(function(){
         $(".panel").css("display","none");
         $("#panel2").css("display","block");
+    });
+
+    $("#alter-information").click(function(){
+        $(".panel").css("display","none");
+        $("#panel3").css("display","block");
+    });
+
+    $("#add-friend").click(function(){
+        $(".panel").css("display","none");
+        $("#panel4").css("display","block");
     });
         
     

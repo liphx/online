@@ -39,6 +39,9 @@ h1{
     width: 150px;
 
 }
+#friend-list{
+    display: none;
+}
 
 .panel{
     display: none;
@@ -46,8 +49,31 @@ h1{
 #form-alter-password{
     margin: 100px 0px 0px 150px;
 }
+
+#form-alter-information{
+    margin: 100px 0px 0px 150px;
+}
+
+#form-add-friend{
+    margin: 100px 0px 0px 150px;
+}
 #form-alter-password label{
     display:inline-block;
     width:100px;
     text-align:right;     
 }
+
+#form-alter-information label{
+    display:inline-block;
+    width:100px;
+    text-align:right;     
+}
+
+#form-add-friend label{
+    display:inline-block;
+    width:100px;
+    text-align:right;     
+}
+
+
+
