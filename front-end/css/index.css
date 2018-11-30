@@ -1,0 +1,53 @@
+body{
+   background-image: url("../image/index-background.jpg");
+}
+h1{
+    padding: 0px 0px 0px 120px;
+}
+#main{
+    padding: 0px 0px 0px 120px;
+}
+#nav{
+    width: 150px;
+    height: 800px;
+    float: left;
+    background-color:black;
+
+}
+#nav div{
+    margin: 30px;
+}
+#nav button{
+    height: 50px;
+}
+#function{
+    width: 300px;
+    height:800px;
+    float: left;
+    background-color:gray;
+}
+#panel{
+    width:600px;
+    height:800px;
+    float: left;
+    background-color:#455787;
+}
+#function button{
+    display: none;
+    margin: 30px 0px 0px 75px;
+    height: 50px;
+    width: 150px;
+
+}
+
+.panel{
+    display: none;
+}
+#form-alter-password{
+    margin: 100px 0px 0px 150px;
+}
+#form-alter-password label{
+    display:inline-block;
+    width:100px;
+    text-align:right;     
+}

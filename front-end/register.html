@@ -10,15 +10,15 @@
     <form id=form-register>
         <div>
             <label>账号</label>
-            <input id="username" type="text"  maxlength="15" >
+            <input id="username" type="text"  maxlength="15">
         </div>
         <div>
             <label>密码</label>
-            <input id="password" type="password" maxlength="20" >
+            <input id="password" type="password" maxlength="20">
         </div>
         <div>
             <label>邮箱</label>
-            <input type="email" id="email" maxlength="50" >
+            <input type="email" id="email" maxlength="50">
         </div>
         <div>  
                 <label>验证码</label>
@@ -51,7 +51,8 @@
                           },
                           function(data,status){
                             if(data.status){
-                               alert("注册成功");
+                               alert("注册成功，去登录");
+                               location.href="login.html";
                             }
                             else{
                                createCode();

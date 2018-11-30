@@ -12,5 +12,9 @@
        $status=true;
     }
     $json=json_encode( array("status"=>$status) );
+    if($status){//写入session
+        session_start();
+        $_SESSION['username']=$userName;          
+    }
     echo $json;   
 ?>
