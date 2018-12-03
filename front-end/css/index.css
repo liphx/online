@@ -75,5 +75,13 @@ h1{
     text-align:right;     
 }
 
+#display .pleft{
+    text-align: left;
+    
+
+}
+#display .pright{
+    text-align: right;
+}
 
 

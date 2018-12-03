@@ -3,7 +3,7 @@ $(document).ready(function(){
     function update(){
         $.post("../back-end/apply_friend.php",
         function(data,status){
-            var j=data;
+             var j=data;
             var fa = $("#friend-apply");
             fa.empty();
             for(i=0;i<j.length;i++){
