@@ -25,9 +25,7 @@ $(document).ready(function(){
                         agree:true
                     },
                     function(data,status){
-                       if(data.status){
                           update();
-                       }
                     },
                     "json"                      
                  );
@@ -40,10 +38,7 @@ $(document).ready(function(){
                         agree:false
                     },
                     function(data,status){
-                        
-                       if(data.status){
                           update();
-                       }
                     },
                     "json"                      
                  );

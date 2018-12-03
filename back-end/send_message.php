@@ -4,8 +4,9 @@
     $message=$_POST["message"];
     session_start();
     $name1=$_SESSION['username'];
+    date_default_timezone_set('PRC'); 
     $date= date("Y/m/d");
-    $time= date("h:i:s");
+    $time= date("H:i:s");
     $conn=mysql_connect("localhost","root","12345678");
     mysql_select_db("user",$conn);
     
