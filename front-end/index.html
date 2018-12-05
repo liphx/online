@@ -20,10 +20,11 @@
 </head>
 <body>
 
-<h1>Hello <script>$("h1").append(username)</script></h1>
 <div id=main>
 
 <div id=nav>
+   <h1><script>$("h1").append(username)</script></h1>
+        
    <div id=information>
        <button id=infor_button>个人中心</button>
    </div>
@@ -47,13 +48,6 @@
         <div id=friend-list class=fri>
             
         </div>
-
-        <button id=group-list class=gro>群聊列表</button>
-        <button id=add-group class=gro>加入群聊</button>
-        <button id=create-group class=gro>创建群聊</button>
-
-        
-
    
 </div>
 
@@ -125,7 +119,7 @@
         <div id=panel5 class=panel>
             <fieldset>
             <legend><p></p></legend>           
-            <div id=display  style="height:520px;overflow-y:auto"> 
+            <div id=display  style="height:480px;overflow-y:auto"> 
             
             </div> </fieldset>
             
@@ -133,7 +127,7 @@
                 <div>
                     <label>输入要发送的消息</label>
                     <br>
-                    <textarea id="reply-text" rows="5" cols="70"></textarea>
+                    <textarea id="reply-text" rows="5" cols="70" ></textarea>
                 </div>
                         
                 <br>

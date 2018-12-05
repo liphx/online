@@ -90,10 +90,7 @@ $(document).ready(function(){
     });
 
     $("#gro_button").click(function(){
-        $("#function button").css("display","none");
-        $("#friend-list").css("display","none");
-        $(".gro").css("display","block");
-        
+       
     });         
 
 

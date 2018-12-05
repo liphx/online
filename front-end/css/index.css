@@ -2,16 +2,18 @@ body{
    background-image: url("../image/index-background.jpg");
 }
 h1{
-    padding: 0px 0px 0px 120px;
+    padding: 10px 0px 10px 30px;
+    
+    
 }
 #main{
     padding: 0px 0px 0px 120px;
 }
 #nav{
     width: 150px;
-    height: 800px;
+    height: 680px;
     float: left;
-    background-color:black;
+    background-color:slategray
 
 }
 #nav div{
@@ -22,15 +24,15 @@ h1{
 }
 #function{
     width: 300px;
-    height:800px;
+    height:680px;
     float: left;
-    background-color:gray;
+    background-color:gray
 }
 #panel{
     width:600px;
-    height:800px;
+    height:680px;
     float: left;
-    background-color:#455787;
+    background-color:rgba(101, 86, 74, 0.36);
 }
 #function button{
     display: none;
@@ -84,4 +86,11 @@ h1{
     text-align: right;
 }
 
+#panel5-button{
+    margin-left: 540px;
+}
 
+#reply-text{
+    width: 590px;
+    
+}

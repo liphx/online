@@ -1,3 +1,18 @@
+function deal_friend(name,agree){
+    $.post("../back-end/deal_friend.php",
+    {
+        name:name,
+        agree:agree
+    },
+    function(data,status){
+          update();   
+    },
+    "json"                      
+ );
+  
+}
+
+
 $(document).ready(function(){
 
     function update(){
@@ -8,44 +23,24 @@ $(document).ready(function(){
             fa.empty();
             for(i=0;i<j.length;i++){
                 var name=j[i];
-                var l = $("<p></p>");
-                fa.append(l);
-                l.css("display","block");
-                l.text(j[i]);
-                var b1 = $("<button>同意</button>");
-                fa.append(b1);
-                b1.css("display","block");
-                var b2 = $("<button>拒绝</button>");
-                fa.append(b2);
-                b2.css("display","block");
-                b1.click(function(){
-                    $.post("../back-end/deal_friend.php",
-                    {
-                        name:name,
-                        agree:true
-                    },
-                    function(data,status){
-                          update();
-                    },
-                    "json"                      
-                 );
-
-                });
-                b1.click(function(){
-                    $.post("../back-end/deal_friend.php",
-                    {
-                        name:name,
-                        agree:false
-                    },
-                    function(data,status){
-                          update();
-                    },
-                    "json"                      
-                 );
-
-                });
-                
-                       
+                (function(name)
+                {
+                    var l = $("<p></p>");
+                    fa.append(l);
+                    l.css("display","block");
+                    l.text(name);
+                    var b1 = $("<button onclick=deal_friend(\""+name+"\",\"true\")>同意</button>");
+                    b1.click(function(){
+                        deal_friend(name,"true");
+   
+                    });
+                    fa.append(b1);
+                    b1.css("display","block");
+                    var b2 = $("<button onclick=deal_friend(\""+name+"\",\"false\")>拒绝</button>");
+                    fa.append(b2);
+                    b2.css("display","block");  
+                })(name);
+                             
                 
             }
         },
