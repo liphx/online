@@ -12,10 +12,17 @@
     <link rel="stylesheet" href="css/index.css">
 
     <script>
-        var username=sessionStorage.username;
-        if(username==undefined){
-            location="login.html";
-        }
+        $.get("../back-end/islogin.php",
+        function(data,status){
+           if(data.status){
+               sessionStorage.username=data.username;
+           }
+           else{
+               location="login.html";
+           }  
+        },
+        "json"                      
+        );
     </script>
 </head>
 <body>
@@ -119,7 +126,7 @@
         <div id=panel5 class=panel>
             <fieldset>
             <legend><p></p></legend>           
-            <div id=display  style="height:480px;overflow-y:auto"> 
+            <div id=display  style="height:460px;overflow-y:auto"> 
             
             </div> </fieldset>
             
@@ -130,7 +137,6 @@
                     <textarea id="reply-text" rows="5" cols="70" ></textarea>
                 </div>
                         
-                <br>
                 <div>
                     <input type="submit" id="panel5-button" value="发送">
                 </div>

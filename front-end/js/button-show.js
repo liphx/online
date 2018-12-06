@@ -90,7 +90,8 @@ $(document).ready(function(){
     });
 
     $("#gro_button").click(function(){
-       
+        window.open("group.html", '_blank').location;
+        
     });         
 
 

@@ -11,7 +11,7 @@ h1{
 }
 #nav{
     width: 150px;
-    height: 680px;
+    height: 660px;
     float: left;
     background-color:slategray
 
@@ -24,13 +24,13 @@ h1{
 }
 #function{
     width: 300px;
-    height:680px;
+    height:660px;
     float: left;
     background-color:gray
 }
 #panel{
     width:600px;
-    height:680px;
+    height:660px;
     float: left;
     background-color:rgba(101, 86, 74, 0.36);
 }
@@ -87,10 +87,11 @@ h1{
 }
 
 #panel5-button{
-    margin-left: 540px;
+    margin-left: 550px;
 }
 
 #reply-text{
+    height:70px;
     width: 590px;
     
 }
