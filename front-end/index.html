@@ -30,7 +30,11 @@
 <div id=main>
 
 <div id=nav>
-   <h1><script>$("h1").append(sessionStorage.username)</script></h1>
+   <h1><script>
+      $(document).ready(function(){
+        $("h1").append(sessionStorage.username);
+      });
+   </script></h1>
         
    <div id=information>
        <button id=infor_button>个人中心</button>
