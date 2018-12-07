@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8">
+    <script src="js/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script>
+        $.get("../back-end/islogin.php",
+        function(data,status){
+            if(data.status){
+                sessionStorage.username=data.username;
+            }
+            else{
+                location="login.html";
+            }  
+            },
+            "json"                      
+        );
+    </script>
+</head>
+
+<body>
+
+</body>
+</html>
