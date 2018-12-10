@@ -6,19 +6,19 @@
     $conn=mysql_connect("localhost","root","12345678");
     mysql_select_db("user",$conn);
 
-    $result=mysql_query("select * from group_member where name='$username'");  
+    $result=mysql_query("select id from group_member where name='$username'");  
 
     
     $i=0;
     while($detail=mysql_fetch_row($result)){
-        $arr[$i]=$detail[0];
-        $result2=mysql_query("select * from groups where id='$arr[$i]'");
-        $detail2=mysql_fetch_row($result2);
-        $arr2[$i]=$detail2[0];
+        $arr[$i][0]=$detail[0];
+        $id= $arr[$i][0];
+        $result2=mysql_query("select name from groups where id='$id' ");
+        $group_name=mysql_fetch_row($result2);
+        $arr[$i][1]=$group_name[0];
         $i++;
     } 
-
-    $json=json_encode( $arr2 );
+    $json=json_encode( $arr );
     echo $json;
     
        
