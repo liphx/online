@@ -47,7 +47,7 @@
     text-align: center;
 }
 
-#message_diaplay{
+#message_display{
     width: 720px;
     height: 440px;
     background-color: lightslategrey;
@@ -74,7 +74,16 @@
 }
 
 #group_display button{
-    width: 120px;
-    height: 100px;
-    color: red;
+    width: 240px;
+    height: 50px;
+    
+}
+
+#message_display .pleft{
+    text-align: left;
+    
+
+}
+#message_display .pright{
+    text-align: right;
 }
