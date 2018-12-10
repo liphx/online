@@ -3,14 +3,21 @@ function mygroup(){
     function(data,status){
         
          var j=data;
-         console.log(j);
          var panel=$("#group_display");
          panel.empty();
          if(j==undefined){
             var p=$("<p>你没有群聊，快去加入吧</p>");
             panel.append(p);
-            
+         }
+         else{
+             for(var i=0;i<j.length;i++){
+                 var b=$("<button></button>");
+                 panel.append(b);
+                 b.css("display","block");
+                 b.text(j[i][1]);
 
+             }
+ 
          }
     },
     "json"                      

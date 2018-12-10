@@ -72,3 +72,9 @@
     width: 114px;
     float: left;
 }
+
+#group_display button{
+    width: 120px;
+    height: 100px;
+    color: red;
+}
