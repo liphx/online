@@ -15,9 +15,42 @@
             "json"                      
         );
     </script>
+     <link rel="stylesheet" href="css/group.css">
 </head>
 
 <body>
+<div id=main>
+    <div id=group>
+       <div id=search>
+       <input type="text" placeholder="输入关键词搜索群聊">
+       <input type="image"src="image/ico_search.jpg"/ width="20px" height="20px">
+       </div>
 
+       <div id=group_display>
+       </div>
+
+       <div id=join_group>
+            <button type="button" id=add>加入群聊 <img src="image/ico_add.jpg" width="20px" height="20px"></button>
+       </div>
+
+    </div>
+
+    <div id=message>
+       <div id=title>
+           <p>群聊名称--我的昵称</p>
+       </div>
+       <div id=message_diaplay>
+
+       </div>
+
+       <div id=message_send>
+            <textarea id="send-text" rows="5" cols="60" ></textarea>
+            <button type="button" id=send>发送</button>
+
+       </div> 
+
+
+    </div>
+</div>
 </body>
 </html>

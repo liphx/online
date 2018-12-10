@@ -91,6 +91,7 @@ h1{
 }
 
 #reply-text{
+    resize:none;
     height:70px;
     width: 590px;
     

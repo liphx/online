@@ -1,0 +1,74 @@
+#main{
+    padding: 20px 0px 0px 120px;
+
+}
+#group{
+    width:240px;
+    height:600px;
+    border:1px solid  #000;
+    float: left;
+    
+}
+
+#message{
+    width:720px;
+    height:600px;
+    border:1px solid  #000;
+    float: left;
+}
+
+#search{
+    padding: 20px 0px 35px 30px;
+}
+
+#group_display{
+    height: 440px;
+    overflow-y:auto;
+    background-color: lightgrey;
+}
+
+#join_group{
+    padding: 20px 0px 0px 30px;
+}
+
+#add{
+    width:150px;
+}
+
+#title{
+    width:720px;
+    height: 60px;
+    background-color: lightcyan;
+    border:1px solid  #000;
+    margin-bottom:20px
+    
+}
+#title p{
+    text-align: center;
+}
+
+#message_diaplay{
+    width: 720px;
+    height: 440px;
+    background-color: lightslategrey;
+    overflow-y:auto;
+}
+
+#message_send{
+    width:720px;
+    height: 80px;
+    
+}
+
+#send-text{
+    resize:none;
+    height: 70px;
+    width: 600px;
+    float: left;
+}
+
+#send{
+    height: 76px;
+    width: 114px;
+    float: left;
+}
