@@ -10,5 +10,9 @@
     $conn=mysql_connect("localhost","root","12345678");
     mysql_select_db("user",$conn);
     
+<<<<<<< HEAD
     mysql_query("insert into group_message(id,name,time,message,date) values('$group_id','$name','$time','$message','$date')"); 
+=======
+    mysql_query("insert into group_message(id,name,date,time,message) values('$groupid','$name','$date','$time','$message')"); 
+>>>>>>> 2fce691e654a3738fd1a5f33b67266a42c733eb5
 ?>
