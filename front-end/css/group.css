@@ -17,6 +17,22 @@
     float: left;
 }
 
+#joinGroup{
+    width:720px;
+    height:600px;
+    border:1px solid  #000;
+    float: left;
+    display:none;
+}
+
+#setGroup{
+    width:720px;
+    height:600px;
+    border:1px solid  #000;
+    float: left;
+    display:none;
+}
+
 #search{
     padding: 20px 0px 35px 30px;
 }
@@ -31,7 +47,7 @@
     padding: 20px 0px 0px 30px;
 }
 
-#add{
+#join{
     width:150px;
 }
 
@@ -45,6 +61,11 @@
 }
 #title p{
     text-align: center;
+}
+#title div{
+    position: relative;
+    left: 640px;
+    top: -40px; 
 }
 
 #message_display{

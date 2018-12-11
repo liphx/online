@@ -13,8 +13,7 @@ function mygroup(){
              for(var i=0;i<j.length;i++){
                  var group_id=j[i][0];
                  var group_name=j[i][1];
-                 var b=$("<button onclick=group_message(\""+group_id+"\",\""+group_name+"\")></button>");
-              //   console.log("<button onclick=group_message(\""+group_id+"\",\""+group_name+"\")></button>");
+                 var b=$("<button onclick=show_message_group(\""+group_id+"\",\""+group_name+"\")></button>");
                  panel.append(b);
                  b.css("display","block");
                  b.text(j[i][1]);
@@ -37,14 +36,13 @@ function group_message(group_id,group_name){
     sessionStorage.group_id=group_id;
     sessionStorage.group_name=group_name;
     var username=sessionStorage.username;
-    $("#title p:eq(0)").text(group_name+"--"+username);
+    $("#title p:eq(0)").text(group_name+"("+group_id+")--"+username);
     $.post("../back-end/get_message_group.php",
     {
         group_id:group_id
     },
     function(data,status){
         var result=data;
-        console.log(result);
         
         var panel=$("#message_display");
         panel.empty();
@@ -66,7 +64,12 @@ function group_message(group_id,group_name){
      );
 
 }
-
+function show_message_group(group_id,group_name){
+    $("#joinGroup").css("display","none");
+    $("#setGroup").css("display","none");
+    $("#message").css("display","block");
+    group_message(group_id,group_name);
+}
 
 function send_message_group(group_id,group_name,username){
         var message=$("#send-text").val();
@@ -107,6 +110,123 @@ $(document).ready(function(){
         var username=sessionStorage.username;
         send_message_group(group_id,group_name,username);
     });
+    $("#join").click(function(){
+        $("#message").css("display","none");
+        $("#setGroup").css("display","none");
+        $("#joinGroup").css("display","block");
+    });
+
+    $("#join-button").click(function(){
+        var group_id=$("#groupId").val();
+        var text = $("#groupId") 
+        text.after(text.clone().val("")); 
+        text.remove();
+        if(group_id==""){
+            alert("请输入群号");
+            return false;
+        }
+        else{$.post("../back-end/join_group.php",
+            {                          
+               group_id:group_id
+            },
+            function(data,status){
+               if(data.status===1){
+                  alert("已发送申请");
+               }
+               else if(data.status===2){
+                  alert("群号不存在");
+               }
+               else if(data.status===3){
+                alert("你已经加入该群");
+               }
+            },
+            "json"                      
+         );
+         return false;
+       }
+      });
+
+
+      $("#create-button").click(function(){
+        var group_name=$("#groupName").val();
+        var text = $("#groupName") 
+        text.after(text.clone().val("")); 
+        text.remove();
+        if(group_name==""){
+            alert("请输入群名");
+            return false;
+        }
+        else{$.post("../back-end/create_group.php",
+            {                          
+               group_name:group_name
+            },
+            function(data,status){
+               alert("创建成功，群号为:"+data.id);
+            },
+            "json"                      
+         );
+         return false;
+       }
+      }); 
+       
+      $("#setting").click(function(){
+        function manage(){
+            $.post("../back-end/deal_group.php",
+            function(data,status){
+                var j=data;
+                var ma = $("#manage");
+                fa.empty();
+                for(i=0;i<j.length;i++){
+                    var name=j[i];
+                    (function(name)
+                    {
+                        var l = $("<p></p>");
+                        ma.append(l);
+                        l.css("display","block");
+                        l.text(name);
+                        var b1 = $("<button onclick=deal_group(\""+name+"\",\"true\")>同意</button>");
+                        b1.click(function(){
+                            deal_group(name,"true");
+       
+                        });
+                        ma.append(b1);
+                        b1.css("display","block");
+                        var b2 = $("<button onclick=deal_group(\""+name+"\",\"false\")>拒绝</button>");
+                        ma.append(b2);
+                        b2.css("display","block");  
+                    })(name);               
+                }
+            },
+            "json"                      
+         );
+        }
+        var group_id=sessionStorage.group_id;
+        var username=sessionStorage.username;
+        var group_name=sessionStorage.group_name;
+        $("#message").css("display","none");
+        $("#setGroup").css("display","none");
+        $("#setGroup").css("display","block");
+        $("#setGroup label:eq(0)").text(group_name+"("+group_id+")");
+        var isOwner=0;
+        $.post("../back-end/isOwner.php",
+        {                          
+           group_id:group_id
+        },
+        function(data,status){
+           if(data.status===1){
+            isOwner=1;
+            $("#setGroup p:eq(0)").text("群主");
+           }
+           else{
+            isOwner=0;
+            $("#setGroup p:eq(0)").text("成员");
+           }
+        },
+        "json"                      
+        );
+
+      });
+
 });
 
 

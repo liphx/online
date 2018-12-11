@@ -2,21 +2,19 @@
     header('Content-Type:application/json; charset=utf-8');
     session_start();
     $username=$_SESSION['username'];
-    $groupname=$_POST['groupname'];
+    $group_name=$_POST['group_name'];
     $conn=mysql_connect("localhost","root","12345678");
     mysql_select_db("user",$conn);
 
-    $result=mysql_query("select * from group_list");  
-    $i=1;
-    while($detail=mysql_fetch_row($result)){
-        $i++;
+    $query=mysql_query( "insert into groups(name) values('$group_name')" );
+    
+    $result=mysql_query( "select MAX(id) from groups" );
+    $detail=mysql_fetch_row($result); 
+    if($detail){
+        $id=$detail[0];
     }
 
-    mysql_query("insert into group_list values('$i','groupname')");
-    mysql_query("insert into group_chat values('$i','username')");
-
-    $json=json_encode( $i );
-    echo $json;
-    
-       
+    $query=mysql_query( "insert into group_member(id,name,owner) values('$id','$username',1)" );
+    $json=json_encode( array("id"=>$id) );
+    echo $json;   
 ?>

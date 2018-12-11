@@ -31,7 +31,7 @@
        </div>
 
        <div id=join_group>
-            <button type="button" id=add>加入群聊 <img src="image/ico_add.jpg" width="20px" height="20px"></button>
+            <button type="button" id=join>加入群聊 <img src="image/ico_add.jpg" width="20px" height="20px"></button>
        </div>
 
     </div>
@@ -39,6 +39,9 @@
     <div id=message>
        <div id=title>
            <p></p>
+           <div>
+           <button type="button" id=setting>群设置 <img src="image/ico_setting.jpg" width="20px" height="20px"></button>
+           </div>
        </div>
        <div id="message_display">
 
@@ -49,8 +52,28 @@
             <button type="button" id=send>发送</button>
 
        </div> 
+    </div>
 
+    <div id=joinGroup>
+        <div>
+            <label>输入群号</label>
+            <input type="text" id="groupId" maxlength="30">
+            <input type="button" id="join-button" value="申请加入">
+        </div>
+        <div>
+            <label>创建群聊</label>
+            <input type="text" id="groupName" maxlength="30" placeholder="请输入群聊名称">
+            <input type="button" id="create-button" value="创建">
+        </div>
+    </div>
 
+    <div id=setGroup>
+        <label></label>
+        <p></p>
+        <p>以下用户申请进群</p>
+        <div id=manage>
+        </div>
+        
     </div>
 </div>
 </body>
