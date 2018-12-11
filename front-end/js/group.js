@@ -170,13 +170,19 @@ $(document).ready(function(){
       }); 
        
       $("#setting").click(function(){
-        function manage(){
-            $.post("../back-end/deal_group.php",
+        var group_id=sessionStorage.group_id;
+        var username=sessionStorage.username;
+        var group_name=sessionStorage.group_name;
+        function get_apply(group_id){
+            $("#manage").empty();
+            $.post("../back-end/apply_group.php",
+            {                          
+               group_id:group_id
+            },
             function(data,status){
                 var j=data;
                 var ma = $("#manage");
-                fa.empty();
-                for(i=0;i<j.length;i++){
+                for(var i in j){
                     var name=j[i];
                     (function(name)
                     {
@@ -184,25 +190,44 @@ $(document).ready(function(){
                         ma.append(l);
                         l.css("display","block");
                         l.text(name);
-                        var b1 = $("<button onclick=deal_group(\""+name+"\",\"true\")>同意</button>");
+                        var b1 = $("<button>同意</button>");  
                         b1.click(function(){
-                            deal_group(name,"true");
+                            $.post("../back-end/deal_group.php",
+                            {                          
+                               name:name,
+                               group_id:group_id,
+                               agree:"true"
+                            },
+                            function(data,status){
+                                get_apply(group_id);
+                            });
        
-                        });
+                        });            
                         ma.append(b1);
                         b1.css("display","block");
-                        var b2 = $("<button onclick=deal_group(\""+name+"\",\"false\")>拒绝</button>");
+                        var b2 = $("<button>拒绝</button>");
+                        b2.click(function(){
+                            $.post("../back-end/deal_group.php",
+                            {                          
+                               name:name,
+                               group_id:group_id,
+                               agree:"false"
+                            },
+                            function(data,status){
+                                get_apply(group_id);
+                            });
+       
+                        });
                         ma.append(b2);
                         b2.css("display","block");  
-                    })(name);               
+                    })(name);                            
+                    
                 }
             },
             "json"                      
-         );
+            );
+
         }
-        var group_id=sessionStorage.group_id;
-        var username=sessionStorage.username;
-        var group_name=sessionStorage.group_name;
         $("#message").css("display","none");
         $("#setGroup").css("display","none");
         $("#setGroup").css("display","block");
@@ -216,10 +241,15 @@ $(document).ready(function(){
            if(data.status===1){
             isOwner=1;
             $("#setGroup p:eq(0)").text("群主");
+            $("#manage").empty();
+            get_apply(group_id);
            }
            else{
             isOwner=0;
             $("#setGroup p:eq(0)").text("成员");
+            $("#manage").empty();
+            var p=$("<p>你没有管理权限</p>");
+            $("#manage").append(p);
            }
         },
         "json"                      
