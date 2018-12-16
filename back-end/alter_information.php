@@ -1,7 +1,8 @@
 <?
     header('Content-Type:application/json; charset=utf-8');
     $status=true;
-    $email = $_POST["email"];
+    parse_str(file_get_contents('php://input'), $data);
+    $email=$data['email'];  
     session_start();
     $username=$_SESSION['username'];
     $conn=mysql_connect("localhost","root","12345678");

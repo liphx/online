@@ -5,14 +5,14 @@ function show_bottom(){
 }
 
 function get_message(name){
-    $.post("../back-end/get_message.php",
+    $.get("../back-end/get_message.php",
     {
         name:name
     },
     function(data,status){
         var result=data;
         $("#display").empty();
-        for(var i=0;i<result.length;i++){
+        for(var i in result){
             var p=$("<p></p>");
             if(result[i][0]==name){
                 p.attr("class","pleft");
@@ -47,9 +47,9 @@ function show(name){
 }
 
 function get_fri(){
-    
+    //获取好友列表
     var j;
-    $.post("../back-end/friends.php",
+    $.get("../back-end/friends.php",
        function(data,status){
            j=data;
            var fl = $("#friend-list");

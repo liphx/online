@@ -10,7 +10,7 @@ function mygroup(){
             panel.append(p);
          }
          else{
-             for(var i=0;i<j.length;i++){
+             for(var i in j){
                  var group_id=j[i][0];
                  var group_name=j[i][1];
                  var b=$("<button onclick=show_message_group(\""+group_id+"\",\""+group_name+"\")></button>");
@@ -37,7 +37,7 @@ function group_message(group_id,group_name){
     sessionStorage.group_name=group_name;
     var username=sessionStorage.username;
     $("#title p:eq(0)").text(group_name+"("+group_id+")--"+username);
-    $.post("../back-end/get_message_group.php",
+    $.get("../back-end/get_message_group.php",
     {
         group_id:group_id
     },

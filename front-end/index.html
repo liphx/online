@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/index.css">
 
     <script>
+        //从服务器利用session判断是否登录的状态
         $.get("../back-end/islogin.php",
         function(data,status){
            if(data.status){

@@ -1,4 +1,5 @@
 $(document).ready(function(){
+  //修改用户密码
     $("#panel2-button").click(function(){
        var old=$("#old").val();
        var new1=$("#new1").val();

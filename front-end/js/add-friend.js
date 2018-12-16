@@ -21,7 +21,7 @@ $(document).ready(function(){
             var j=data;
             var fa = $("#friend-apply");
             fa.empty();
-            for(i=0;i<j.length;i++){
+            for(var i in j){
                 var name=j[i];
                 (function(name)
                 {
@@ -52,6 +52,7 @@ $(document).ready(function(){
     update();
 
     $("#panel4-button").click(function(){
+        //查询并申请添加好友
         var name=$("#panel4-name").val();
         if(name==""){
             alert("请输入对方账号");
