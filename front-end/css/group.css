@@ -108,3 +108,12 @@
 #message_display .pright{
     text-align: right;
 }
+
+#joinGroup *{
+    text-align: center;
+    margin-top: 50px;
+}
+#setGroup *{
+    text-align: center;
+}
+

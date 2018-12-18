@@ -190,7 +190,7 @@ $(document).ready(function(){
                         ma.append(l);
                         l.css("display","block");
                         l.text(name);
-                        var b1 = $("<button>同意</button>");  
+                        var b1 = $("<p><button>同意</button></p>");  
                         b1.click(function(){
                             $.post("../back-end/deal_group.php",
                             {                          
@@ -205,7 +205,7 @@ $(document).ready(function(){
                         });            
                         ma.append(b1);
                         b1.css("display","block");
-                        var b2 = $("<button>拒绝</button>");
+                        var b2 = $("<p><button>拒绝</button></p>");
                         b2.click(function(){
                             $.post("../back-end/deal_group.php",
                             {                          
@@ -231,7 +231,7 @@ $(document).ready(function(){
         $("#message").css("display","none");
         $("#setGroup").css("display","none");
         $("#setGroup").css("display","block");
-        $("#setGroup label:eq(0)").text(group_name+"("+group_id+")");
+        $("#setGroup p:eq(0)").text(group_name+"("+group_id+")");
         var isOwner=0;
         $.post("../back-end/isOwner.php",
         {                          
@@ -240,13 +240,13 @@ $(document).ready(function(){
         function(data,status){
            if(data.status===1){
             isOwner=1;
-            $("#setGroup p:eq(0)").text("群主");
+            $("#setGroup p:eq(1)").text("群主");
             $("#manage").empty();
             get_apply(group_id);
            }
            else{
             isOwner=0;
-            $("#setGroup p:eq(0)").text("成员");
+            $("#setGroup p:eq(1)").text("成员");
             $("#manage").empty();
             var p=$("<p>你没有管理权限</p>");
             $("#manage").append(p);

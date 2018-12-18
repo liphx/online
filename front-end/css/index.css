@@ -95,3 +95,13 @@ h1{
     height:70px;
     width: 590px;
 }
+
+#panel1{
+    text-align: center;
+    margin-top: 100px;
+}
+#display p{
+    height: auto; 
+    word-wrap:break-word; 
+    word-break:break-all; 
+    }
