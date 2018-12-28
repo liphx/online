@@ -51,12 +51,12 @@ back-end
  'send_message_group.php'   季可琛
 docs
  '软件设计说明书.docx'        李鹏华
- '软件需求规格说明书.doc'   李鹏华，季可琛，石晓霖，赵健
+ '软件需求规格说明书.doc'     李鹏华，季可琛，石晓霖，赵健
 front-end
  'group.html'               李鹏华，赵健
  'index.html'               李鹏华，赵健
- 'login.html'               李鹏华，石晓霖
- 'register.html'            李鹏华，石晓霖
+ 'login.html'               李鹏华，石晓霖，赵健
+ 'register.html'            李鹏华，石晓霖，赵健
  
  'group.css'                石晓霖，赵健
  'index.css'                石晓霖，赵健
@@ -66,8 +66,9 @@ front-end
 ['add-friend.js'            李鹏华，石晓霖
  'alter-information.js'     李鹏华，赵健
  'alter-password.js'        李鹏华，赵健
- 'button-show.js'           李鹏华
+ 'button-show.js'           李鹏华，
  'group.js'                 李鹏华，季可琛，石晓霖
  'panel-show.js'            李鹏华
  'send.js'                  李鹏华，季可琛
- 'verification-code.js']    李鹏华
+ 'verification-code.js'     李鹏华
+ 'validate.js']             赵健
