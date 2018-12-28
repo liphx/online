@@ -59,19 +59,19 @@ docs
 front-end
  'group.html'               李鹏华
  'index.html'               李鹏华
- 'login.html'               李鹏华
- 'register.html'            李鹏华
+ 'login.html'               李鹏华，石晓霖
+ 'register.html'            李鹏华，石晓霖
  
  'group.css'                石晓霖，赵健
  'index.css'                石晓霖，赵健
  'login.css'                石晓霖，赵健
  'register.css'             石晓霖，赵健
  
-['add-friend.js'            李鹏华
- 'alter-information.js'     李鹏华
- 'alter-password.js'        李鹏华
+['add-friend.js'            李鹏华，石晓霖
+ 'alter-information.js'     李鹏华，
+ 'alter-password.js'        李鹏华，
  'button-show.js'           李鹏华
- 'group.js'                 李鹏华，季可琛
+ 'group.js'                 李鹏华，季可琛，石晓霖
  'panel-show.js'            李鹏华
  'send.js'                  李鹏华，季可琛
  'verification-code.js']    李鹏华
