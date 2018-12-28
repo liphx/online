@@ -257,6 +257,36 @@ $(document).ready(function(){
 
       });
 
+      // 退出/解散群聊
+      $("#exit").click(function(){
+        var group_id=sessionStorage.group_id;
+        
+        $.ajax({
+            url: "../back-end/exit_group.php", 
+            type:"DELETE",
+            data: {
+              "group_id":group_id
+            },     
+            dataType: "json",          
+            success: function(data,status){
+              
+             if(data.status===1){
+                 alert("您已退出该群");            
+             }
+             else if(data.status===0){
+                 alert("您已解散该群");
+             }
+             else{
+                alert("操作失败");
+                
+             }
+            },
+            error: function(data,status){
+                alert("你不在该群");
+            }
+        });
+      });
+
 });
 
 
