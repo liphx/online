@@ -73,5 +73,5 @@ front-end
  'button-show.js'           李鹏华
  'group.js'                 李鹏华，季可琛
  'panel-show.js'            李鹏华
- 'send.js'                  季可琛
+ 'send.js'                  李鹏华，季可琛
  'verification-code.js']    李鹏华
