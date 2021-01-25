@@ -19,9 +19,9 @@ int main()
 {
     Sqlite db("test.db");
     int ret = SQLITE_OK;
-    ret |= db.execute("create table IF NOT EXISTS user(id int, name string, passwd string, PRIMARY KEY (id))");
-    ret |= db.execute("insert into user values(0, 'abc', '123')");
-    ret |= db.execute("insert into user values(1, 'abc', '123')");
+    ret |= db.execute("create table IF NOT EXISTS user(name string, passwd string, email string, PRIMARY KEY (name))");
+    ret |= db.execute("insert into user values('abc', '123', '0.qq')");
+    ret |= db.execute("insert into user values('abd', '123', '1.qq')");
     auto result = db.query("select * from user");
     print("ret = ", ret);
     for (auto x: result) {
@@ -32,12 +32,11 @@ int main()
     print("===============");
 
     PreparedStatement st(db, "select * from user");
-    print("id", "name", "passwd");
+    print("name", "passwd");
     while (st.step() == SQLITE_ROW) {
-        int id = st.column_int(0);
-        string name = st.column_text(1);
-        string passwd = st.column_text(2);
-        print(id, name, passwd);
+        string name = st.column_text(0);
+        string passwd = st.column_text(1);
+        print(name, passwd);
     }
 
 }
