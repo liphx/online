@@ -1,5 +1,5 @@
 function mygroup(){
-    $.get("../back-end/list_group.php",
+    $.get("/api/list_group",
     function(data,status){
         
          var j=data;
@@ -37,7 +37,7 @@ function group_message(group_id,group_name){
     sessionStorage.group_name=group_name;
     var username=sessionStorage.username;
     $("#title p:eq(0)").text(group_name+"("+group_id+")--"+username);
-    $.get("../back-end/get_message_group.php",
+    $.get("/api/get_message_group",
     {
         group_id:group_id
     },
@@ -78,7 +78,7 @@ function send_message_group(group_id,group_name,username){
           return false;
         }
         else{ 
-         $.post("../back-end/send_message_group.php",
+         $.post("/api/send_message_group",
            {                          
               message:message,
               group_id:group_id
@@ -125,7 +125,7 @@ $(document).ready(function(){
             alert("请输入群号");
             return false;
         }
-        else{$.post("../back-end/join_group.php",
+        else{$.post("/api/join_group",
             {                          
                group_id:group_id
             },
@@ -156,7 +156,7 @@ $(document).ready(function(){
             alert("请输入群名");
             return false;
         }
-        else{$.post("../back-end/create_group.php",
+        else{$.post("/api/create_group",
             {                          
                group_name:group_name
             },
@@ -175,7 +175,7 @@ $(document).ready(function(){
         var group_name=sessionStorage.group_name;
         function get_apply(group_id){
             $("#manage").empty();
-            $.post("../back-end/apply_group.php",
+            $.post("/api/apply_group",
             {                          
                group_id:group_id
             },
@@ -192,7 +192,7 @@ $(document).ready(function(){
                         l.text(name);
                         var b1 = $("<p><button>同意</button></p>");  
                         b1.click(function(){
-                            $.post("../back-end/deal_group.php",
+                            $.post("/api/deal_group",
                             {                          
                                name:name,
                                group_id:group_id,
@@ -207,7 +207,7 @@ $(document).ready(function(){
                         b1.css("display","block");
                         var b2 = $("<p><button>拒绝</button></p>");
                         b2.click(function(){
-                            $.post("../back-end/deal_group.php",
+                            $.post("/api/deal_group",
                             {                          
                                name:name,
                                group_id:group_id,
@@ -233,7 +233,7 @@ $(document).ready(function(){
         $("#setGroup").css("display","block");
         $("#setGroup p:eq(0)").text(group_name+"("+group_id+")");
         var isOwner=0;
-        $.post("../back-end/isOwner.php",
+        $.post("/api/isOwner",
         {                          
            group_id:group_id
         },
@@ -262,7 +262,7 @@ $(document).ready(function(){
         var group_id=sessionStorage.group_id;
         
         $.ajax({
-            url: "../back-end/exit_group.php", 
+            url: "/api/exit_group", 
             type:"DELETE",
             data: {
               "group_id":group_id

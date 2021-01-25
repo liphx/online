@@ -5,7 +5,7 @@ function show_bottom(){
 }
 
 function get_message(name){
-    $.get("../back-end/get_message.php",
+    $.get("/api/get_message",
     {
         name:name
     },
@@ -49,7 +49,7 @@ function show(name){
 function get_fri(){
     //获取好友列表
     var j;
-    $.get("../back-end/friends.php",
+    $.get("/api/friends",
        function(data,status){
            j=data;
            var fl = $("#friend-list");

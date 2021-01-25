@@ -40,7 +40,7 @@
                 }
                 else{
                     //向后端发送数据，根据传回的内容在回调函数里进行跳转，并在后端写入session
-                    $.post("../back-end/login.php",
+                    $.post("/api/login",
                        {                          
                            username:userName,
                            password:pass

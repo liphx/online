@@ -7,7 +7,7 @@ $(document).ready(function(){
          return false;
        }
        else{ 
-        $.post("../back-end/send_message.php",
+        $.post("/api/send_message",
           {                          
              message:message,
              name2:name2

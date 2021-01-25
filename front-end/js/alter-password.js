@@ -13,7 +13,7 @@ $(document).ready(function(){
          return false;
        }
        else{ 
-        $.post("../back-end/alter_password.php",
+        $.post("/api/alter_password",
           {                          
              old:old,
              new:new1

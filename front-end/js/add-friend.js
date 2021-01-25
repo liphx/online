@@ -1,5 +1,5 @@
 function deal_friend(name,agree){
-    $.post("../back-end/deal_friend.php",
+    $.post("/api/deal_friend",
     {
         name:name,
         agree:agree
@@ -16,7 +16,7 @@ function deal_friend(name,agree){
 $(document).ready(function(){
 
     function update(){
-        $.post("../back-end/apply_friend.php",
+        $.post("/api/apply_friend",
         function(data,status){
             var j=data;
             var fa = $("#friend-apply");
@@ -62,7 +62,7 @@ $(document).ready(function(){
             alert("不能添加自己为好友");
             return false;
         }
-        else{$.post("../back-end/add_friend.php",
+        else{$.post("/api/add_friend",
             {                          
                username:name
             },

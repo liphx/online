@@ -1,7 +1,7 @@
 function get_infor(){
     //获取用户信息
     var j;
-    $.get("../back-end/information.php",
+    $.get("/api/information",
        function(data,status){
            j=data;
 

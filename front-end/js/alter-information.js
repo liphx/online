@@ -8,7 +8,7 @@ $(document).ready(function(){
        }
        else{
         $.ajax({
-            url: "../back-end/alter_information.php", 
+            url: "/api/alter_information", 
             type:"PUT",
             data: {
               "email":email
@@ -20,7 +20,7 @@ $(document).ready(function(){
              }
             }
         }); 
-     /*   $.post("../back-end/alter_information.php",
+     /*   $.post("/api/alter_information",
           {                          
              email:email
           },
