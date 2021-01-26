@@ -1,12 +1,15 @@
 function get_infor(){
     //获取用户信息
     var j;
-    $.get("/api/information",
+    $.post("/api/information",
+        {
+            name:sessionStorage.userName,
+            session_id:sessionStorage.session_id
+        },
        function(data,status){
-           j=data;
-
-           $("#panel1 p:eq(0)").text(j[0]);
-           $("#panel1 p:eq(1)").text(j[1]);
+           console.log(data.information)
+           $("#panel1 p:eq(0)").text(data.information.name);
+           $("#panel1 p:eq(1)").text(data.information.email);
        },
        "json"                      
     );
