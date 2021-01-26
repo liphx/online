@@ -9,9 +9,11 @@ $(document).ready(function(){
        else{
         $.ajax({
             url: "/api/alter_information", 
-            type:"PUT",
+            type:"POST",
             data: {
-              "email":email
+               "email":email,
+               "name":sessionStorage.userName,
+               "session_id":sessionStorage.session_id
             },     
             dataType: "json",          
             success: function(data,status){
