@@ -14,10 +14,13 @@ $(document).ready(function(){
        }
        else{ 
         $.post("/api/alter_password",
-          {                          
-             old:old,
-             new:new1
-          },
+         {
+            name:sessionStorage.userName,
+            session_id:sessionStorage.session_id,
+            old_passwd:old,
+            new_passwd:new1
+         },
+   
           function(data,status){
              if(data.status){
                 alert("修改成功");
