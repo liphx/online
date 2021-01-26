@@ -13,6 +13,8 @@ using namespace std;
 using json = nlohmann::json;
 using namespace CryptoPP;
 
+const char db_path[] = "./test.db";
+
 void print()
 {
     cout << endl;
@@ -80,7 +82,7 @@ void Information(const httplib::Request &req, httplib::Response &res)
     auto name = req.get_param_value("name");
     auto session_id = req.get_param_value("session_id");
     if (check_session(name, session_id)) {
-        Sqlite db("test.db");
+        Sqlite db(db_path);
         string sql = "select name, email from user where name = '" + name + "'";
         print("sql:", sql);
         auto result = db.query(sql.c_str());
@@ -117,7 +119,7 @@ void Login(const httplib::Request &req, httplib::Response &res)
     if (name == "" || passwd == "") {
         ret["status"] = false;
     } else {
-        Sqlite db("test.db");
+        Sqlite db(db_path);
         string sql = "select * from user where name = '" + name + "' and passwd = '" + passwd + "'";
         print("sql:", sql);
         auto result = db.query(sql.c_str());
@@ -150,7 +152,7 @@ void Register(const httplib::Request &req, httplib::Response &res)
     if (name == "" || passwd == "" || email == "") {
         ret["status"] = false;
     } else {
-        Sqlite db("test.db");
+        Sqlite db(db_path);
         string sql = "select * from user where name = '" + name + "'";
         print("sql:", sql);
         auto result = db.query(sql.c_str());
@@ -184,7 +186,7 @@ void AlterPassword(const httplib::Request &req, httplib::Response &res)
     auto new_passwd = req.get_param_value("new_passwd");
     print(name, session_id, old_passwd, new_passwd);
     if (old_passwd != "" && new_passwd != "" && check_session(name, session_id)) {
-        Sqlite db("test.db");
+        Sqlite db(db_path);
         string sql = "select * from user where name = '" + name + "' and passwd = '" + old_passwd + "'";
         print("sql:", sql);
         auto result = db.query(sql.c_str());
@@ -211,7 +213,7 @@ void AlterInformation(const httplib::Request &req, httplib::Response &res)
     auto session_id = req.get_param_value("session_id");
     auto email = req.get_param_value("email");
     if (email != "" && check_session(name, session_id)) {
-        Sqlite db("test.db");
+        Sqlite db(db_path);
         string sql = "update user set email = '" + email + "' where name = '" + name + "'";
         print("sql:", sql);
         int db_ret = db.execute(sql.c_str());
@@ -232,7 +234,7 @@ void GetFriends(const httplib::Request &req, httplib::Response &res)
     auto name = req.get_param_value("name");
     auto session_id = req.get_param_value("session_id");
     if (check_session(name, session_id)) {
-        Sqlite db("test.db");
+        Sqlite db(db_path);
         string sql = "select name2 from friends where name1 = '" + name + "'";
         print("sql:", sql);
         auto result = db.query(sql.c_str());
@@ -253,7 +255,7 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
     auto friend_name = req.get_param_value("friend_name");
     print(name, session_id, friend_name);
     if (friend_name != "" && check_session(name, session_id)) {
-        // Sqlite db("test.db");
+        // Sqlite db(db_path);
         // string sql = "select * from message where (name1='" + name + "' and name2='" + friend_name + 
         //     "') or (name1='" + friend_name + "' and name2='" + name + "')";
         // print("sql:", sql);
@@ -293,7 +295,7 @@ void SendMessage(const httplib::Request &req, httplib::Response &res)
     auto friend_name = req.get_param_value("friend_name");
     auto message = req.get_param_value("message");
     if (friend_name != "" && message != "" && check_session(name, session_id)) {
-        Sqlite db("test.db");
+        Sqlite db(db_path);
         string sql = "insert into message values('" + name + "', '" + friend_name + 
             "', '" + message + "')";
         print("sql:", sql);
