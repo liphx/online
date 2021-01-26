@@ -7,7 +7,7 @@ Sqlite.o:Sqlite.cpp Sqlite.h
 	gcc -c Sqlite.cpp
 
 httplib.o:
-	gcc -c third_party/cpp-httplib/out/httplib.cc
+	gcc -c third_party/cpp-httplib/httplib.cc
 
 clean:
 	rm -rf *.o main test.db

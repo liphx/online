@@ -6,7 +6,7 @@
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 #include <cryptopp/md5.h>
 #include <cryptopp/hex.h>
-#include "third_party/cpp-httplib/out/httplib.h"
+#include "third_party/cpp-httplib/httplib.h"
 #include "third_party/nlohmann/json.hpp"
 
 using namespace std;
