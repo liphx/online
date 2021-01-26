@@ -5,23 +5,26 @@ function show_bottom(){
 }
 
 function get_message(name){
-    $.get("/api/get_message",
+    $.post("/api/get_message",
     {
-        name:name
+        friend_name:name,
+        name:sessionStorage.userName,
+        session_id:sessionStorage.session_id
     },
     function(data,status){
-        var result=data;
-        $("#display").empty();
+        var result=data["message"];
+        console.log(result);
+        //$("#display").empty();
         for(var i in result){
             var p=$("<p></p>");
-            if(result[i][0]==name){
+            if(result[i]["name1"]==name){
                 p.attr("class","pleft");
             }
             else{
                 p.attr("class","pright");
             }
             $("#display").append(p);  
-            p.text(result[i][2]+" "+result[i][3]+" "+result[i][4]);  
+            p.text(result[i]["message"]);  
             show_bottom();       
         }    
     },
@@ -33,7 +36,7 @@ function showchat(){
     if(sessionStorage.username2){
         get_message(sessionStorage.username2);
     }
-    setTimeout(showchat,1000);
+    setTimeout(showchat, 1500);
 }
 
 showchat();
@@ -49,9 +52,13 @@ function show(name){
 function get_fri(){
     //获取好友列表
     var j;
-    $.get("/api/friends",
+    $.post("/api/get_friends",
+    {
+        name:sessionStorage.userName,
+        session_id:sessionStorage.session_id
+    },
        function(data,status){
-           j=data;
+           j=data["friends"];
            var fl = $("#friend-list");
            fl.empty();
            for(var i=0;i<j.length;i++){
@@ -61,13 +68,8 @@ function get_fri(){
                fl.append(b);
                b.css("display","block");
                b.text(name);
-               
-               
-                  
-               
            }
 
-           
        },
        "json"                      
     );
