@@ -8,19 +8,27 @@ $(document).ready(function(){
        }
        else{ 
         $.post("/api/send_message",
-          {                          
-             message:message,
-             name2:name2
+        {
+          friend_name:name2,
+          name:sessionStorage.userName,
+          session_id:sessionStorage.session_id,
+          message:message,
           },
           function(data,status){
-            
           },
           "json"                      
        );
+       
        var text = $("#reply-text") 
        text.after(text.clone().val("")); 
        text.remove(); 
-       get_message(name2); 
+       get_message(name2);
+
+       var p=$("<p></p>");
+       p.attr("class","pright");
+       $("#display").append(p);  
+       p.text(message);
+      
        return false;
      }
     });
