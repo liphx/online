@@ -10,7 +10,7 @@
 <div id="login_frame">
     <form>
         <fieldset>
-            <legend id="forbl">登录</legend>           
+            <legend id="forbl">登录</legend>
             <div>
                 <p>账号：<input type="text" id="username" placeholder="请输入用户名"></p>
             </div>
@@ -42,16 +42,16 @@
                     //向后端发送数据，根据传回的内容在回调函数里进行跳转，并在后端写入session
                     $.post("/api/login",
                        {                          
-                           username:userName,
-                           password:pass
+                           name:userName,
+                           passwd:pass
                        },
                        function(data,status){
                            
                            if(data.status){
                                //alert("登录成功");
-                               window.location.href="index.html";
-
-
+                               sessionStorage.userName = userName;
+                               sessionStorage.session_id = data.session_id;
+                               window.location.href = "index.html";
                            }
                            else{
                                alert("登录失败");
