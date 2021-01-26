@@ -1,8 +1,10 @@
 function deal_friend(name,agree){
     $.post("/api/deal_friend",
     {
-        name:name,
-        agree:agree
+        "name":sessionStorage.userName,
+        "session_id":sessionStorage.session_id,
+        "friend_name":name,
+        "agree":agree
     },
     function(data,status){
           update();   
@@ -17,8 +19,12 @@ $(document).ready(function(){
 
     function update(){
         $.post("/api/apply_friend",
+        {
+            "name":sessionStorage.userName,
+            "session_id":sessionStorage.session_id
+        },
         function(data,status){
-            var j=data;
+            var j=data["request"];
             var fa = $("#friend-apply");
             fa.empty();
             for(var i in j){
@@ -46,7 +52,7 @@ $(document).ready(function(){
         },
         "json"                      
      );
-        setTimeout(update, 1000);
+        setTimeout(update, 15000);
     }
 
     update();
@@ -58,13 +64,15 @@ $(document).ready(function(){
             alert("请输入对方账号");
             return false;
         }
-        else if(name==sessionStorage.username){
+        else if(name==sessionStorage.userName){
             alert("不能添加自己为好友");
             return false;
         }
         else{$.post("/api/add_friend",
             {                          
-               username:name
+                name:sessionStorage.userName,
+                session_id:sessionStorage.session_id,
+                friend_name:name
             },
             function(data,status){
                if(data.status){

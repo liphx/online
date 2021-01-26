@@ -55,6 +55,7 @@ struct message_info {
 };
 
 multimap<string, message_info> message_cache;
+multimap<string, string> friend_request;
 
 void print_message_cache()
 {
@@ -316,6 +317,104 @@ void SendMessage(const httplib::Request &req, httplib::Response &res)
     res.set_content(ret.dump(), "application/json");
 }
 
+void AddFriend(const httplib::Request &req, httplib::Response &res)
+{
+    json ret;
+    ret["status"] = false;
+    auto name = req.get_param_value("name");
+    auto session_id = req.get_param_value("session_id");
+    auto friend_name = req.get_param_value("friend_name");
+    if (friend_name != "" && check_session(name, session_id)) {
+        Sqlite db(db_path);
+        string sql = "select * from user where name = '" + friend_name + "'";
+        print("sql:", sql);
+        auto result = db.query(sql.c_str());
+        if (result.empty()) { // 用户不存在
+            ret["status"] = false;
+        } else {
+            sql = "select * from friends where (name1='" + name + "' and name2='" + friend_name + "')";
+            result = db.query(sql.c_str());
+            if (!result.empty()) { // 已经是好友
+                ret["status"] = false;
+            } else {
+                ret["status"] = true;
+                bool is_in_request = false;
+                auto pr = friend_request.equal_range(friend_name);
+                if (pr.first != friend_request.end()) {
+                    for (auto iter = pr.first; iter != pr.second; iter++) {
+                        if (iter->second == name) {
+                            is_in_request = true; // 已经请求过了
+                            break;
+                        }
+                    }
+                }
+                if (!is_in_request) {
+                    friend_request.insert(make_pair(friend_name, name));
+                }
+            }
+        }
+    }
+    print(ret.dump());
+    // for (auto i: friend_request) {
+    //     print("friend_request", i.first, i.second);
+    // }
+    res.set_content(ret.dump(), "application/json");
+}
+
+void ApplyFriend(const httplib::Request &req, httplib::Response &res)
+{
+    json ret;
+    ret["request"] = nullptr;
+    auto name = req.get_param_value("name");
+    auto session_id = req.get_param_value("session_id");
+    if (check_session(name, session_id)) {
+        auto pr = friend_request.equal_range(name);
+        if (pr.first != friend_request.end()) {
+            int i = 0;
+            for (auto iter = pr.first; iter != pr.second; iter++, i++) {
+                ret["request"][i] = iter->second;
+            }
+        }
+    }
+    print(ret.dump());
+    res.set_content(ret.dump(), "application/json");
+}
+
+void DealFriend(const httplib::Request &req, httplib::Response &res)
+{
+    json ret;
+    ret["status"] = false;
+    auto name = req.get_param_value("name");
+    auto session_id = req.get_param_value("session_id");
+    auto friend_name = req.get_param_value("friend_name");
+    auto agree = req.get_param_value("agree");
+    print("deal_friend", name, friend_name, agree);
+    if (friend_name != "" && check_session(name, session_id)) {
+        auto pr = friend_request.equal_range(name);
+        if (pr.first != friend_request.end()) {
+            for (auto iter = pr.first; iter != pr.second; iter++) {
+                if (iter->second == friend_name) {
+                    friend_request.erase(iter);
+                    if (agree == "true") { // 写入db
+                        Sqlite db(db_path);
+                        string sql = "insert into friends values('" + name + "', '" + friend_name + "')";
+                        int db_ret = db.execute(sql.c_str());
+                        sql = "insert into friends values('" + friend_name + "', '" + name + "')";
+                        db_ret |= db.execute(sql.c_str());
+                        if (db_ret != SQLITE_OK) {
+                            ret["status"] = false;
+                        } else {
+                            ret["status"] = true;
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    print(ret.dump());
+    res.set_content(ret.dump(), "application/json");
+}
 
 int main(int argc, char *argv[])
 {
@@ -333,8 +432,9 @@ int main(int argc, char *argv[])
     svr.Post("/api/get_friends", GetFriends);
     svr.Post("/api/get_message", GetMessage);
     svr.Post("/api/send_message", SendMessage);
-
-    // svr.Post("/api/add_friends", AddFriends);
+    svr.Post("/api/add_friend", AddFriend);
+    svr.Post("/api/apply_friend", ApplyFriend);
+    svr.Post("/api/deal_friend", DealFriend);
 
     svr.listen(argv[1], atoi(argv[2]));
     return 0;
