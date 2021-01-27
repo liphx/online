@@ -528,13 +528,14 @@ void DealFriend(const httplib::Request &req, httplib::Response &res)
     json body, ret;
     ret["status"] = false;
 
-    string name, session_id, friend_name, agree;
+    string name, session_id, friend_name;
+    bool agree;
     try {
         body = json::parse(req.body);
         name = body.at("name").get<string>();
         session_id = body.at("session_id").get<string>();
         friend_name = body.at("friend_name").get<string>();
-        agree = body.at("agree").get<string>();
+        agree = body.at("agree").get<bool>();
     } catch (exception) {
         print("json::parse error");
         goto result;
@@ -547,7 +548,7 @@ void DealFriend(const httplib::Request &req, httplib::Response &res)
             for (auto iter = pr.first; iter != pr.second; iter++) {
                 if (iter->second == friend_name) {
                     friend_request.erase(iter);
-                    if (agree == "true") { // 写入db
+                    if (agree) { // 写入db
                         Sqlite db(db_path);
                         string sql = "insert into friends values('" + name + "', '" + friend_name + "')";
                         int db_ret = db.execute(sql.c_str());

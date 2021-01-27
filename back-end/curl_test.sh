@@ -30,27 +30,66 @@ function curl_post()
 url_prefix='http://127.0.0.1:5000'
 test_set_api=(
     '/api/register'
+    '/api/register'
     '/api/login'
     '/api/islogin'
     '/api/information'
     '/api/alter_password'
     '/api/alter_information'
+    '/api/information'
+    '/api/add_friend'
+    '/api/login'
+    '/api/apply_friend'
+    '/api/deal_friend'
+    '/api/get_friends'
+    '/api/get_friends'
+    '/api/send_message'
+    '/api/send_message'
+    '/api/get_message'
+    '/api/get_message'
 )
 
 test_set_data=(
     '{ "name": "abc", "passwd": "123", "email": "123@abc.com" }'
+    '{ "name": "ABC", "passwd": "123", "email": "123@abc.com" }'
     '{ "name": "abc", "passwd": "123" }'
     '{ "name": "abc", "session_id": "123456" }'
     '{ "name": "abc", "session_id": "123456" }'
     '{ "name": "abc", "session_id": "123456", "old_passwd": "123", "new_passwd": "321" }'
+    '{ "name": "abc", "session_id": "123456", "email": "123@cba.com" }'
+    '{ "name": "abc", "session_id": "123456" }'
+    '{ "name": "abc", "session_id": "123456", "friend_name": "ABC" }'
+    '{ "name": "ABC", "passwd": "123" }'
+    '{ "name": "ABC", "session_id": "123456" }'
+    '{ "name": "ABC", "session_id": "123456", "friend_name": "abc", "agree": true }'
+    '{ "name": "abc", "session_id": "123456" }'
+    '{ "name": "ABC", "session_id": "123456" }'
+    '{ "name": "ABC", "session_id": "123456", "friend_name": "abc", "message": "hello" }'
+    '{ "name": "abc", "session_id": "123456", "friend_name": "ABC", "message": "world" }'
+    '{ "name": "ABC", "session_id": "123456", "friend_name": "abc" }'
+    '{ "name": "abc", "session_id": "123456", "friend_name": "ABC" }'
+     
 )
 
 test_set_expect=(
+    '{"status":true}'
     '{"status":true}'
     '{"session_id":"123456","status":true}'
     '{"status":true}'
     '{"information":{"email":"123@abc.com","name":"abc"}}'
     '{"status":true}'
+    '{"status":true}'
+    '{"information":{"email":"123@cba.com","name":"abc"}}'
+    '{"status":true}'
+    '{"session_id":"123456","status":true}'
+    '{"request":["abc"]}'
+    '{"status":true}'
+    '{"friends":["ABC"]}'
+    '{"friends":["abc"]}'
+    '{"status":true}'
+    '{"status":true}'
+    '{"message":[{"message":"world","name1":"abc","name2":"ABC"}]}'
+    '{"message":[{"message":"hello","name1":"ABC","name2":"abc"}]}'
 )
 
 function test_main()
@@ -61,11 +100,21 @@ function test_main()
       if [ "$result" = "${test_set_expect[$i]}" ]; then
           let "pass = pass + 1"
       else
-          echo "test case $i failed"
+          echo "--------test case $(($i + 1)) failed--------"
+          echo "$result"
       fi
     done
-    echo "$pass PASSED"
+    echo "${#test_set_api[@]} cases, $pass passed"
 }
 
 test_main
+
+sqlite3 test.db <<EOF
+SELECT * FROM user;
+SELECT * FROM friends;
+SELECT * FROM message;
+EOF
+
 kill -9 $pid_of_main
+rm -f test.db
+exit 0
