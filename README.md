@@ -4,17 +4,17 @@
 
 * http <https://github.com/yhirose/cpp-httplib>
 * 数据库 <https://sqlite.org/index.html>
-* JSON <https://github.com/nlohmann/json.git>
+* JSON <https://github.com/nlohmann/json>
 * 加密库 <https://www.cryptopp.com>
 * 前端 <https://jquery.com>
 
 ## todo
 
 * sql 目前采用拼接的方式，需加fmt
-* 校验
+* 数据校验
 * session 定时器
 
-## db 
+## DB 
 
 ```sql
 DROP TABLE IF EXISTS user;
@@ -30,7 +30,7 @@ create table IF NOT EXISTS message(name1 string, name2 string, message string);
 delete from message;
 ```
 
-## json
+## API
 
 * /api/register { "name":STRING, "passwd":STRING, "email":STRING } => { "status": BOOL }
 * /api/login { "name":STRING, "passwd":STRING } => { "status": BOOL, "session_id": STRING }
