@@ -1,76 +1,72 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8">
-<script src="js/jquery-3.3.1.min.js" type="text/javascript"></script>
-<script src="js/verification-code.js" type="text/javascript"></script>
-<link rel="stylesheet" href="css/register.css">
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <script src="js/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="js/verification-code.js" type="text/javascript"></script>
+    <script src="js/request.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="css/register.css">
 </head>
+
 <body>
 
-<div id="register_frame">
-    <h1>Welcome to join!</h1>
-    <form id=form-register>
-        <div>
-            <label class="label_input">账号</label>
-            <input id="username" type="text"  maxlength="15" >
-        </div>
-        <div>
-            <label class="label_input">密码</label>
-            <input id="password" type="password" maxlength="20">
-        </div>
-        <div>
-            <label class="label_input">邮箱</label>
-            <input type="email" id="email" maxlength="50" >
-        </div>
-        <div>
-            <label class="label_input">验证码</label>
-            <input type = "text" id = "input" value="" />
+    <div id="register_frame">
+        <h1>Welcome to join!</h1>
+        <form id=form-register>
+            <div>
+                <label class="label_input">账号</label>
+                <input id="username" type="text" maxlength="15">
+            </div>
+            <div>
+                <label class="label_input">密码</label>
+                <input id="password" type="password" maxlength="20">
+            </div>
+            <div>
+                <label class="label_input">邮箱</label>
+                <input type="email" id="email" maxlength="50">
+            </div>
+            <div>
+                <label class="label_input">验证码</label>
+                <input type="text" id="input" value="" />
 
-        </div>
-        <div>
-            <input type = "button" id="code" onclick="createCode()"/>
-        </div>
-        <br>
-        <div>
-            <input class="lasttext" type="submit" id="button" value="注册" >
-        </div>
-        <ul>
-            <li class="lasttext">已经拥有帐号? <a id="fastway" href="login.html">直接登录</a></li>
-        </ul>
-    </form>
-</div>
+            </div>
+            <div>
+                <input type="button" id="code" onclick="createCode()" />
+            </div>
+            <br>
+            <div>
+                <input class="lasttext" type="submit" id="button" value="注册">
+            </div>
+            <ul>
+                <li class="lasttext">已经拥有帐号? <a id="fastway" href="login.html">直接登录</a></li>
+            </ul>
+        </form>
+    </div>
 
     <script>
         //注册用户
-        $(document).ready(function(){
-            $("#button").click(function(){
-                var userName=$("#username").val();
-                var pass=$("#password").val();
-                var Email=$("#email").val();
-                if(userName==""||pass==""||Email==""){
+        $(document).ready(function () {
+            $("#button").click(function () {
+                var userName = $("#username").val();
+                var pass = $("#password").val();
+                var Email = $("#email").val();
+                if (userName == "" || pass == "" || Email == "") {
                     alert("账号、密码和邮箱均不能为空");
                     return false;
                 }
-                else{
-                    if(validate()){
-                        $.post("/api/register",
-                          {
-                             name:userName,
-                             passwd:pass,
-                             email:Email
-                          },
-                          function(data,status){
-                            if(data.status){
-                               alert("注册成功，去登录");
-                               location.href="login.html";
+                else {
+                    if (validate()) {
+                        post_register(userName, pass, Email, function (data, status) {
+                            if (data.status) {
+                                alert("注册成功，去登录");
+                                location.href = "login.html";
                             }
-                            else{
-                               createCode();
-                               alert("注册失败");
+                            else {
+                                createCode();
+                                alert("注册失败");
                             }
-                          },
-                        "json"
-                        );
-
+                        });
                     }
                     return false;
                 }
@@ -79,8 +75,6 @@
 
     </script>
 
-
-
 </body>
-</html>
 
+</html>
