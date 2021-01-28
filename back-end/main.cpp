@@ -30,6 +30,20 @@ void print(const T& firstArg, const Types&... args)
     print(args...);
 }
 
+bool is_user_exist(string name)
+{
+    if (name == "") {
+        return false;
+    }
+    Sqlite db(db_path);
+    string sql = "select * from user where name = '" + name + "'";
+    auto result = db.query(sql.c_str());
+    if (result.empty()) {
+        return false;
+    }
+    return true;
+}
+
 string md5(string msg)
 {
     Weak::MD5 hash;
@@ -363,17 +377,19 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
         // }
         bool has_new_message = false;
         for (;;) { // 长轮询
+            int wait = 0;
             auto pr = message_cache.equal_range(name);
             if (pr.first != message_cache.end()) {
                 auto iter = pr.first;
                 int i = 0;
-                for (; iter != pr.second; i++) {
+                for (; iter != pr.second;) {
                     if (friend_name == iter->second.from) {
                         has_new_message = true;
                         ret["message"][i]["name1"] = iter->second.from;
                         ret["message"][i]["name2"] = iter->second.to;
                         ret["message"][i]["message"] = iter->second.message;
                         iter = message_cache.erase(iter); // 注意迭代器失效
+                        i++;
                     } else {
                         iter++;
                     }
@@ -382,7 +398,13 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
             if (has_new_message) {
                 break;
             } else { // 没有消息，阻塞
-                sleep(2);
+                // wait += 2;
+                // sleep(2);
+                break;
+            }
+
+            if (wait > 10) { // 超时返回
+                break;
             }
         }
          
@@ -390,6 +412,7 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
 
 result:
     print(ret.dump());
+    print_message_cache();
     res.set_content(ret.dump(), "application/json");
 }
 
@@ -411,7 +434,11 @@ void SendMessage(const httplib::Request &req, httplib::Response &res)
         goto result;
     }
 
-    if (friend_name != "" && message != "" && check_session(name, session_id)) {
+    if (!is_user_exist(friend_name)) {
+        goto result;
+    }
+
+    if (message != "" && check_session(name, session_id)) {
         Sqlite db(db_path);
         string sql = "insert into message values('" + name + "', '" + friend_name + 
             "', '" + message + "')";
@@ -431,7 +458,7 @@ void SendMessage(const httplib::Request &req, httplib::Response &res)
 
 result:
     print(ret.dump());
-    //print_message_cache();
+    print_message_cache();
     res.set_content(ret.dump(), "application/json");
 }
 
