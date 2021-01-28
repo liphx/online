@@ -75,14 +75,18 @@ function post_get_friends(name, session_id, func) {
 }
 
 function post_get_message(name, session_id, friend_name, func) {
-    $.post("/api/get_message",
-        JSON.stringify({
+    $.ajax({
+        url: "/api/get_message",
+        type: "POST",
+        data: JSON.stringify({
             "name": name,
             "session_id": session_id,
             "friend_name": friend_name,
         }),
-        func, "json"
-    );
+        //timeout: 10000,
+        dataType: "json",
+        success: func
+    });
 }
 
 function post_send_message(name, session_id, friend_name, message, func) {
