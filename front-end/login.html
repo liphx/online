@@ -1,73 +1,68 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8">
+
+<head>
+    <meta charset="UTF-8">
     <script src="js/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="js/request.js" type="text/javascript"></script>
     <link rel="stylesheet" href="css/login.css">
 </head>
 
 <body>
 
-<div id="login_frame">
-    <form>
-        <fieldset>
-            <legend id="forbl">登录</legend>
-            <div>
-                <p>账号：<input type="text" id="username" placeholder="请输入用户名"></p>
-            </div>
-            <div>
-                <p>密码：<input type="password" id="password" placeholder="请输入密码"></p>
-            </div>
-            <div>
-                <p><input  type="checkbox" id="remember">记住密码</p>
-            </div>
-            <div>
-                <br>
-                <input value="登录" type="submit" id="button">
-                <a id="foral" href="register.html" >注册帐号</a>
-            </div>        
-        </fieldset>
-            
-    </form>
-    <script>
-       
-        $(document).ready(function(){
-            $("#button").click(function(){                
-                var userName=$("#username").val();
-                var pass=$("#password").val();
-                if(userName==""||pass==""){
-                    alert("账号和密码不能为空");
-                    return false;
-                }
-                else{
-                    //向后端发送数据，根据传回的内容在回调函数里进行跳转，并在后端写入session
-                    $.post("/api/login",
-                       {                          
-                           name:userName,
-                           passwd:pass
-                       },
-                       function(data,status){
-                           
-                           if(data.status){
-                               //alert("登录成功");
-                               sessionStorage.userName = userName;
-                               sessionStorage.session_id = data.session_id;
-                               window.location.href = "index.html";
-                           }
-                           else{
-                               alert("登录失败");
-                           }
-                         
-                       },
-                       "json"                      
-                    );                  
-                return false;    
-                }               
-            });
-        });
+    <div id="login_frame">
+        <form>
+            <fieldset>
+                <legend id="forbl">登录</legend>
+                <div>
+                    <p>账号：<input type="text" id="username" placeholder="请输入用户名"></p>
+                </div>
+                <div>
+                    <p>密码：<input type="password" id="password" placeholder="请输入密码"></p>
+                </div>
+                <div>
+                    <p><input type="checkbox" id="remember">记住密码</p>
+                </div>
+                <div>
+                    <br>
+                    <input value="登录" type="submit" id="button">
+                    <a id="foral" href="register.html">注册帐号</a>
+                </div>
+            </fieldset>
 
-    </script>
-    
-</div>
+        </form>
+        <script>
+
+            $(document).ready(function () {
+                $("#button").click(function () {
+                    var userName = $("#username").val();
+                    var pass = $("#password").val();
+                    if (userName == "" || pass == "") {
+                        alert("账号和密码不能为空");
+                        return false;
+                    }
+                    else {
+                        post_login(userName, pass, function (data, status) {
+                            if (data.status) {
+                                //alert("登录成功");
+                                sessionStorage.userName = userName;
+                                sessionStorage.session_id = data.session_id;
+                                window.location.href = "index.html";
+                            }
+                            else {
+                                alert("登录失败");
+                            }
+
+                        });
+                        return false;
+                    }
+                });
+            });
+
+        </script>
+
+    </div>
 
 </body>
+
 </html>
