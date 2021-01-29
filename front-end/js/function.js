@@ -8,6 +8,73 @@ function get_infor() {
         });
 }
 
+function update() {
+    post_apply_friend(sessionStorage.userName, sessionStorage.session_id, function (data, status) {
+        var j = data["request"];
+        var fa = $("#friend-apply");
+        fa.empty();
+        for (var i in j) {
+            var name = j[i];
+            (function (name) {
+                var l = $("<p></p>");
+                fa.append(l);
+                l.css("display", "block");
+                l.text(name);
+                var b1 = $("<button onclick=deal_friend(\"" + name + "\",true)>同意</button>");
+                b1.click(function () {
+                    deal_friend(name, true);
+
+                });
+                fa.append(b1);
+                b1.css("display", "block");
+                var b2 = $("<button onclick=deal_friend(\"" + name + "\",false)>拒绝</button>");
+                fa.append(b2);
+                b2.css("display", "block");
+            })(name);
+        }
+    });
+}
+
+function deal_friend(friend_name, agree) {
+    post_deal_friend(sessionStorage.userName, sessionStorage.session_id,
+        friend_name, agree, function (data, status) {
+            update();
+        }
+    );
+}
+
+function show_bottom() {
+    var height = document.getElementById("display").scrollHeight;
+    $("#display").scrollTop(height);
+}
+
+function show(name) {
+    $(".panel").css("display", "none");
+    $("#panel5").css("display", "block");//聊天界面
+    $("#panel5 p:eq(0)").text(name);
+    get_message(name);
+}
+
+function get_fri() {
+    //获取好友列表
+    post_get_friends(sessionStorage.userName, sessionStorage.session_id,
+        function (data, status) {
+            var j = data["friends"];
+            var fl = $("#friend-list");
+            fl.empty();
+            for (var i = 0; i < j.length; i++) {
+                var name = j[i];
+                var b = $("<button onclick=show(\'" + name + "\')></button>");
+
+                fl.append(b);
+                b.css("display", "block");
+                b.text(name);
+            }
+        }
+    );
+
+}
+
 $(document).ready(function () {
     $("#my-information").click(function () {
         $(".panel").css("display", "none");
@@ -28,11 +95,9 @@ $(document).ready(function () {
     $("#add-friend").click(function () {
         $(".panel").css("display", "none");
         $("#panel4").css("display", "block");
+        update();
     });
-});
 
-
-$(document).ready(function () {
     $("#panel5-button").click(function () {
         var message = $("#reply-text").val();
         var name2 = $("#panel5 p:eq(0)").text();
@@ -58,108 +123,6 @@ $(document).ready(function () {
         }
     });
 
-
-
-});
-
-
-function deal_friend(friend_name, agree) {
-    post_deal_friend(sessionStorage.userName, sessionStorage.session_id,
-        friend_name, agree, function (data, status) {
-            update();
-        });
-}
-
-
-$(document).ready(function () {
-
-    function update() {
-        post_apply_friend(sessionStorage.userName, sessionStorage.session_id, function (data, status) {
-            var j = data["request"];
-            var fa = $("#friend-apply");
-            fa.empty();
-            for (var i in j) {
-                var name = j[i];
-                (function (name) {
-                    var l = $("<p></p>");
-                    fa.append(l);
-                    l.css("display", "block");
-                    l.text(name);
-                    var b1 = $("<button onclick=deal_friend(\"" + name + "\",true)>同意</button>");
-                    b1.click(function () {
-                        deal_friend(name, true);
-
-                    });
-                    fa.append(b1);
-                    b1.css("display", "block");
-                    var b2 = $("<button onclick=deal_friend(\"" + name + "\",false)>拒绝</button>");
-                    fa.append(b2);
-                    b2.css("display", "block");
-                })(name);
-
-
-            }
-        });
-        setTimeout(update, 15000);
-    }
-
-    update();
-
-    $("#panel4-button").click(function () {
-        //查询并申请添加好友
-        var name = $("#panel4-name").val();
-        if (name == "") {
-            alert("请输入对方账号");
-            return false;
-        }
-        else if (name == sessionStorage.userName) {
-            alert("不能添加自己为好友");
-            return false;
-        }
-        else {
-            post_add_friend(sessionStorage.userName, sessionStorage.session_id,
-                name, function (data, status) {
-                    if (data.status) {
-                        alert("已发送申请");
-                    }
-                    else {
-                        alert("账号不存在");
-                    }
-            });
-            return false;
-        }
-    });
-
-
-
-});
-
-
-$(document).ready(function () {
-    $("#panel3-button").click(function () {
-        var email = $("#email").val();
-
-        if (email == "") {
-            alert("请填写表单");
-            return false;
-        }
-        else {
-            post_alter_information(sessionStorage.userName, sessionStorage.session_id,
-                email, function (data, status) {
-                    if (data.status) {
-                        alert("修改成功");
-                    }
-            });
-            return false;
-        }
-    });
-
-
-});
-
-
-$(document).ready(function () {
-    //修改用户密码
     $("#panel2-button").click(function () {
         var old = $("#old").val();
         var new1 = $("#new1").val();
@@ -186,74 +149,50 @@ $(document).ready(function () {
             return false;
         }
     });
-});
 
+    $("#panel3-button").click(function () {
+        var email = $("#email").val();
 
-function show_bottom() {
-    var height = document.getElementById("display").scrollHeight;
-    $("#display").scrollTop(height);
-}
-
-function get_message(name) {
-    post_get_message(sessionStorage.userName, sessionStorage.session_id,
-        name, function (data, status) {
-            var result = data["message"];
-            console.log(result);
-            //$("#display").empty();
-            for (var i in result) {
-                var p = $("<p></p>");
-                if (result[i]["name1"] == name) {
-                    p.attr("class", "pleft");
-                }
-                else {
-                    p.attr("class", "pright");
-                }
-                $("#display").append(p);
-                p.text(result[i]["message"]);
-                show_bottom();
-            }
-        });
-}
-
-function showchat() {
-    if (sessionStorage.username2) {
-        get_message(sessionStorage.username2);
-    }
-    setTimeout(showchat, 1500);
-}
-
-showchat();
-
-function show(name) {
-    $(".panel").css("display", "none");
-    $("#panel5").css("display", "block");//聊天界面
-    $("#panel5 p:eq(0)").text(name);
-    get_message(name);
-    sessionStorage.username2 = name;
-}
-
-function get_fri() {
-    //获取好友列表
-    post_get_friends(sessionStorage.userName, sessionStorage.session_id,
-        function (data, status) {
-            var j = data["friends"];
-            var fl = $("#friend-list");
-            fl.empty();
-            for (var i = 0; i < j.length; i++) {
-                var name = j[i];
-                var b = $("<button onclick=show(\'" + name + "\')></button>");
-
-                fl.append(b);
-                b.css("display", "block");
-                b.text(name);
-            }
-
+        if (email == "") {
+            alert("请填写表单");
+            return false;
         }
-    );
+        else {
+            post_alter_information(sessionStorage.userName, sessionStorage.session_id,
+                email, function (data, status) {
+                    if (data.status) {
+                        alert("修改成功");
+                    }
+            });
+            return false;
+        }
+    });
 
-}
+    $("#panel4-button").click(function () {
+        //查询并申请添加好友
+        var name = $("#panel4-name").val();
+        if (name == "") {
+            alert("请输入对方账号");
+            return false;
+        }
+        else if (name == sessionStorage.userName) {
+            alert("不能添加自己为好友");
+            return false;
+        }
+        else {
+            post_add_friend(sessionStorage.userName, sessionStorage.session_id,
+                name, function (data, status) {
+                    if (data.status) {
+                        alert("已发送申请");
+                    }
+                    else {
+                        alert("账号不存在");
+                    }
+            });
+            return false;
+        }
+    });
 
-$(document).ready(function () {
     $("#infor_button").click(function () {
         $("#function button").css("display", "none");
         $("#friend-list").css("display", "none");
@@ -274,3 +213,27 @@ $(document).ready(function () {
     });
 
 });
+
+function get_message(name) {
+    post_get_message(sessionStorage.userName, sessionStorage.session_id,
+        name, function (data, status) {
+            var result = data["message"];
+            console.log(result);
+            //$("#display").empty();
+            for (var i in result) {
+                var p = $("<p></p>");
+                if (result[i]["name1"] == name) {
+                    p.attr("class", "pleft");
+                }
+                else {
+                    p.attr("class", "pright");
+                }
+                $("#display").append(p);
+                p.text(result[i]["message"]);
+                show_bottom();
+            }
+            setTimeout(get_message(name), 1000);
+        }
+        
+    );
+}
