@@ -83,7 +83,7 @@ function post_get_message(name, session_id, friend_name, func) {
             "session_id": session_id,
             "friend_name": friend_name,
         }),
-        //timeout: 10000,
+        timeout: 60000,
         dataType: "json",
         success: func
     });
