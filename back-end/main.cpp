@@ -18,6 +18,8 @@ const char db_path[] = "./test.db";
 bool test_flag = false;
 string test_session_id = "123456";
 
+int g_request_count = 0;
+
 void print()
 {
     cout << endl;
@@ -376,8 +378,8 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
         //     ret["message"][i - 1]["message"] = result[i][2];
         // }
         bool has_new_message = false;
+        int wait = 0;
         for (;;) { // 长轮询
-            int wait = 0;
             auto pr = message_cache.equal_range(name);
             if (pr.first != message_cache.end()) {
                 auto iter = pr.first;
@@ -398,12 +400,12 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
             if (has_new_message) {
                 break;
             } else { // 没有消息，阻塞
-                // wait += 2;
-                // sleep(2);
-                break;
+                wait += 2;
+                // print("sleep 2, wait =", wait);
+                sleep(2);
             }
 
-            if (wait > 10) { // 超时返回
+            if (wait >= 30) { // 超时返回
                 break;
             }
         }
