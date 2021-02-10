@@ -59,6 +59,7 @@ string md5(string msg)
 }
 
 int session_timeout = 20 * 60; // 20 mins
+int clear_session_interval = 10 * 60;
 
 struct session_info {
     string session_id;
@@ -66,6 +67,24 @@ struct session_info {
 };
 
 map<string, session_info> session;
+
+void clear_session()
+{
+    for (;;) {
+        for (auto it = session.begin(); it != session.end(); ) {
+            string name = it->first;
+            session_info info = it->second;
+            time_t now = time(nullptr);
+            if (now - info.create_time >= session_timeout) {
+                print(name, "timeout");
+                session.erase(it++);
+            } else {
+                it++;
+            }
+        }
+        sleep(clear_session_interval);
+    }
+}
 
 struct message_info {
     string from;
@@ -92,6 +111,9 @@ bool check_session(string name, string session_id)
     if (iter == session.end() || session_id != iter->second.session_id) { 
         return false;
     }
+    // update session time
+    session[name].create_time = time(nullptr);
+
     return true;
 }
 
@@ -607,6 +629,12 @@ int main(int argc, char *argv[])
     }
     if (argc >= 4 && argv[3] == string("--test")) {
         test_flag = true;
+    }
+
+    pthread_t newthread;
+    if (pthread_create(&newthread , NULL, (void *(*)(void *))clear_session, NULL) != 0) {
+        cerr << "pthread_create error" << endl;
+        exit(1);
     }
 
     httplib::Server svr;
