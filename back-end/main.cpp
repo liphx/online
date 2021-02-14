@@ -18,6 +18,11 @@ const char db_path[] = "./test.db";
 bool test_flag = false;
 string test_session_id = "123456";
 
+enum {
+    GET_MESSAGE_ALL = 0,
+    GET_MESSAGE_NEW
+};
+
 int g_request_count = 0;
 
 void print()
@@ -377,61 +382,70 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
     ret["message"] = nullptr;
 
     string name, session_id, friend_name;
+    int how = -1;
     try {
         body = json::parse(req.body);
         name = body.at("name").get<string>();
         session_id = body.at("session_id").get<string>();
         friend_name = body.at("friend_name").get<string>();
+        how = body.at("how").get<int>();
     } catch (exception) {
         print("json::parse error");
         goto result;
     }
 
     print(name, session_id, friend_name);
-    if (friend_name != "" && check_session(name, session_id)) {
-        // Sqlite db(db_path);
-        // string sql = "select * from message where (name1='" + name + "' and name2='" + friend_name + 
-        //     "') or (name1='" + friend_name + "' and name2='" + name + "')";
-        // print("sql:", sql);
-        // auto result = db.query(sql.c_str());
-        // for (int i = 1; i < result.size(); i++) {
-        //     ret["message"][i - 1]["name1"] = result[i][0];
-        //     ret["message"][i - 1]["name2"] = result[i][1];
-        //     ret["message"][i - 1]["message"] = result[i][2];
-        // }
-        bool has_new_message = false;
-        int wait = 0;
-        for (;;) { // 长轮询
-            auto pr = message_cache.equal_range(name);
-            if (pr.first != message_cache.end()) {
-                auto iter = pr.first;
-                int i = 0;
-                for (; iter != pr.second;) {
-                    if (friend_name == iter->second.from) {
-                        has_new_message = true;
-                        ret["message"][i]["name1"] = iter->second.from;
-                        ret["message"][i]["name2"] = iter->second.to;
-                        ret["message"][i]["message"] = iter->second.message;
-                        iter = message_cache.erase(iter); // 注意迭代器失效
-                        i++;
-                    } else {
-                        iter++;
+    if (friend_name != "" && check_session(name, session_id) && how != -1) {
+        if (how == GET_MESSAGE_ALL) {
+            Sqlite db(db_path);
+            string sql = "select * from message where (name1='" + name + "' and name2='" + friend_name + 
+                "') or (name1='" + friend_name + "' and name2='" + name + "')";
+            print("sql:", sql);
+            auto result = db.query(sql.c_str());
+            for (int i = 1; i < result.size(); i++) {
+                ret["message"][i - 1]["name1"] = result[i][0];
+                ret["message"][i - 1]["name2"] = result[i][1];
+                ret["message"][i - 1]["message"] = result[i][2];
+            }
+            // clear message cache
+            message_cache.erase(name);
+        } else if (how == GET_MESSAGE_NEW) {
+            bool has_new_message = false;
+            int wait = 0;
+            for (;;) { // 长轮询
+                auto pr = message_cache.equal_range(name);
+                if (pr.first != message_cache.end()) {
+                    auto iter = pr.first;
+                    int i = 0;
+                    for (; iter != pr.second;) {
+                        if (friend_name == iter->second.from) {
+                            has_new_message = true;
+                            ret["message"][i]["name1"] = iter->second.from;
+                            ret["message"][i]["name2"] = iter->second.to;
+                            ret["message"][i]["message"] = iter->second.message;
+                            iter = message_cache.erase(iter); // 注意迭代器失效
+                            i++;
+                        } else {
+                            iter++;
+                        }
                     }
                 }
-            }
-            if (has_new_message) {
-                break;
-            } else { // 没有消息，阻塞
-                wait += 2;
-                // print("sleep 2, wait =", wait);
-                sleep(2);
-            }
+                if (has_new_message) {
+                    break;
+                } else { // 没有消息，阻塞
+                    wait += 2;
+                    // print("sleep 2, wait =", wait);
+                    sleep(2);
+                }
 
-            if (wait >= 30) { // 超时返回
-                break;
+                if (wait >= 30) { // 超时返回
+                    break;
+                }
             }
         }
-         
+        else {
+            print("how =", how);
+        }
     }
 
 result:

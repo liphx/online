@@ -66,8 +66,8 @@ test_set_data=(
     '{ "name": "ABC", "session_id": "123456" }'
     '{ "name": "ABC", "session_id": "123456", "friend_name": "abc", "message": "hello" }'
     '{ "name": "abc", "session_id": "123456", "friend_name": "ABC", "message": "world" }'
-    '{ "name": "ABC", "session_id": "123456", "friend_name": "abc" }'
-    '{ "name": "abc", "session_id": "123456", "friend_name": "ABC" }'
+    '{ "name": "ABC", "session_id": "123456", "friend_name": "abc", "how": 0 }'
+    '{ "name": "abc", "session_id": "123456", "friend_name": "ABC", "how": 1 }'
      
 )
 
@@ -88,7 +88,7 @@ test_set_expect=(
     '{"friends":["abc"]}'
     '{"status":true}'
     '{"status":true}'
-    '{"message":[{"message":"world","name1":"abc","name2":"ABC"}]}'
+    '{"message":[{"message":"hello","name1":"ABC","name2":"abc"},{"message":"world","name1":"abc","name2":"ABC"}]}'
     '{"message":[{"message":"hello","name1":"ABC","name2":"abc"}]}'
 )
 

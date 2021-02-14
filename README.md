@@ -39,7 +39,7 @@ delete from message;
 * /api/alter_password { "name":STRING, "session_id": STRING, "old_passwd": STRING, "new_passwd": STRING } => { "status": BOOL }
 * /api/alter_information { "name":STRING, "session_id": STRING, "email": STRING } => { "status": BOOL }
 * /api/get_friends { "name":STRING, "session_id": STRING } => { "friends": LIST }
-* /api/get_message { "name":STRING, "session_id": STRING, "friend_name": STRING } => { "message": LIST }
+* /api/get_message { "name":STRING, "session_id": STRING, "friend_name": STRING, "how": INT } => { "message": LIST }
 * /api/send_message { "name":STRING, "session_id": STRING, "friend_name": STRING, "message": STRING } => { "status": BOOL }
 * /api/add_friend { "name":STRING, "session_id": STRING, "friend_name": STRING } => { "status": BOOL }
 * /api/apply_friend { "name":STRING, "session_id": STRING } => { "request": LIST }

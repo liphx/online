@@ -52,7 +52,7 @@ function show(name) {
     $(".panel").css("display", "none");
     $("#panel5").css("display", "block");//聊天界面
     $("#panel5 p:eq(0)").text(name);
-    get_message(name);
+    get_message(name, 0);
 }
 
 function get_fri() {
@@ -112,7 +112,7 @@ $(document).ready(function () {
             var text = $("#reply-text")
             text.after(text.clone().val(""));
             text.remove();
-            get_message(name2);
+            get_message(name2, 1);
 
             var p = $("<p></p>");
             p.attr("class", "pright");
@@ -214,8 +214,8 @@ $(document).ready(function () {
 
 });
 
-function get_message(name) {
-    post_get_message(sessionStorage.userName, sessionStorage.session_id,
+function get_message(name, how) {
+    post_get_message(sessionStorage.userName, sessionStorage.session_id, how,
         name, function (data, status) {
             var result = data["message"];
             console.log(result);
@@ -232,7 +232,7 @@ function get_message(name) {
                 p.text(result[i]["message"]);
                 show_bottom();
             }
-            setTimeout(get_message(name), 1000);
+            setTimeout(get_message(name, 1), 1000);
         }
         
     );

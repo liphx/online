@@ -74,7 +74,7 @@ function post_get_friends(name, session_id, func) {
     );
 }
 
-function post_get_message(name, session_id, friend_name, func) {
+function post_get_message(name, session_id, friend_name, how, func) {
     $.ajax({
         url: "/api/get_message",
         type: "POST",
@@ -82,6 +82,7 @@ function post_get_message(name, session_id, friend_name, func) {
             "name": name,
             "session_id": session_id,
             "friend_name": friend_name,
+            "how": how
         }),
         timeout: 60000,
         dataType: "json",
