@@ -118,6 +118,7 @@ $(document).ready(function () {
             p.attr("class", "pright");
             $("#display").append(p);
             p.text(message);
+            show_bottom();
 
             return false;
         }
@@ -215,8 +216,8 @@ $(document).ready(function () {
 });
 
 function get_message(name, how) {
-    post_get_message(sessionStorage.userName, sessionStorage.session_id, how,
-        name, function (data, status) {
+    post_get_message(sessionStorage.userName, sessionStorage.session_id,
+        name, how, function (data, status) {
             var result = data["message"];
             console.log(result);
             //$("#display").empty();
