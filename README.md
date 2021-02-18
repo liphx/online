@@ -25,6 +25,6 @@ create table IF NOT EXISTS friends(name1 string, name2 string, PRIMARY KEY (name
 delete from friends;
 
 DROP TABLE IF EXISTS message;
-create table IF NOT EXISTS message(name1 string, name2 string, message string);
+create table IF NOT EXISTS message(name1 string, name2 string, message string, time int);
 delete from message;
 ```
