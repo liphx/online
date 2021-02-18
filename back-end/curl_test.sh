@@ -16,7 +16,7 @@ create table IF NOT EXISTS friends(name1 string, name2 string, PRIMARY KEY (name
 delete from friends;
 
 DROP TABLE IF EXISTS message;
-create table IF NOT EXISTS message(name1 string, name2 string, message string);
+create table IF NOT EXISTS message(name1 string, name2 string, message string, time int);
 delete from message;
 EOF
 
@@ -88,8 +88,8 @@ test_set_expect=(
     '{"friends":["abc"]}'
     '{"status":true}'
     '{"status":true}'
-    '{"message":[{"message":"hello","name1":"ABC","name2":"abc"},{"message":"world","name1":"abc","name2":"ABC"}]}'
-    '{"message":[{"message":"hello","name1":"ABC","name2":"abc"}]}'
+    '{"message":[{"message":"hello","name1":"ABC","name2":"abc","time":0},{"message":"world","name1":"abc","name2":"ABC","time":0}]}'
+    '{"message":[{"message":"hello","name1":"ABC","name2":"abc","time":0}]}'
 )
 
 function test_main()
