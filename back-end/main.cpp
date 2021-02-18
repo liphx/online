@@ -95,6 +95,7 @@ struct message_info {
     string from;
     string to;
     string message;
+    time_t send_time;
 };
 
 multimap<string, message_info> message_cache;
@@ -406,6 +407,7 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
                 ret["message"][i - 1]["name1"] = result[i][0];
                 ret["message"][i - 1]["name2"] = result[i][1];
                 ret["message"][i - 1]["message"] = result[i][2];
+                ret["message"][i - 1]["time"] = std::stoi(result[i][3]);
             }
             // clear message cache
             message_cache.erase(name);
@@ -423,6 +425,7 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
                             ret["message"][i]["name1"] = iter->second.from;
                             ret["message"][i]["name2"] = iter->second.to;
                             ret["message"][i]["message"] = iter->second.message;
+                            ret["message"][i]["time"] = iter->second.send_time;
                             iter = message_cache.erase(iter); // 注意迭代器失效
                             i++;
                         } else {
@@ -478,8 +481,13 @@ void SendMessage(const httplib::Request &req, httplib::Response &res)
 
     if (message != "" && check_session(name, session_id)) {
         Sqlite db(db_path);
+        time_t now = time(nullptr);
+        if (test_flag) { // for test
+            now = 0;
+        }
+
         string sql = "insert into message values('" + name + "', '" + friend_name + 
-            "', '" + message + "')";
+            "', '" + message + "', " + to_string(now) + ")";
         print("sql:", sql);
         int db_ret = db.execute(sql.c_str());
         if (db_ret != SQLITE_OK) {
@@ -490,6 +498,7 @@ void SendMessage(const httplib::Request &req, httplib::Response &res)
             info.from = name;
             info.to = friend_name;
             info.message = message;
+            info.send_time = now;
             message_cache.insert(make_pair(friend_name, info));
         }
     }
