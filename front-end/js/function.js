@@ -1,3 +1,14 @@
+function formatDate(now) {
+    var year = now.getFullYear();
+    var month = now.getMonth() + 1;
+    var date = now.getDate();
+    var hour = now.getHours();
+    var minute = now.getMinutes();
+    var second = now.getSeconds();
+    return year + "-" + month + "-" + date + " " + hour + ":" + minute + ":" + second;
+}
+
+
 function get_infor() {
     //获取用户信息
     post_information(sessionStorage.userName, sessionStorage.session_id,
@@ -112,11 +123,16 @@ $(document).ready(function () {
             var text = $("#reply-text")
             text.after(text.clone().val(""));
             text.remove();
-            get_message(name2, 1);
 
             var p = $("<p></p>");
+            var p_time = $("<p></p>");
+            p_time.attr("class", "time pright");
             p.attr("class", "pright");
+
+            $("#display").append(p_time);
             $("#display").append(p);
+            var newDate = new Date();
+            p_time.text(formatDate(newDate));
             p.text(message);
             show_bottom();
 
@@ -220,17 +236,33 @@ function get_message(name, how) {
         name, how, function (data, status) {
             var result = data["message"];
             console.log(result);
-            //$("#display").empty();
+            if (how == 0) {
+                $("#display").empty();
+            }
+            
             for (var i in result) {
                 var p = $("<p></p>");
+                var p_time = $("<p></p>");
                 if (result[i]["name1"] == name) {
                     p.attr("class", "pleft");
+                    p_time.attr("class", "time pleft");
                 }
                 else {
                     p.attr("class", "pright");
+                    p_time.attr("class", "time pright");
                 }
+
+                var send_time = result[i]["time"];
+                var message = result[i]["message"];
+
+                var newDate = new Date();
+                newDate.setTime(send_time * 1000);
+                
+                $("#display").append(p_time);
                 $("#display").append(p);
-                p.text(result[i]["message"]);
+                p_time.text(formatDate(newDate));
+                p.text(message);
+
                 show_bottom();
             }
             setTimeout(get_message(name, 1), 1000);
