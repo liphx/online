@@ -140,6 +140,54 @@ $(document).ready(function () {
         }
     });
 
+    $("#upload").click(function () {
+        var friend_name = $("#panel5 p:eq(0)").text();
+        const files = document.getElementById('file').files;
+        for (let i = 0, numFiles = files.length; i < numFiles; i++) {
+            const file = files[i];
+            var formData = new FormData();
+            formData.append("name", sessionStorage.userName);
+            formData.append("session_id", sessionStorage.session_id);
+            formData.append("friend_name", friend_name);
+            formData.append("files", file);
+
+            $.ajax({
+                url: "/api/upload_file",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'POST',
+                success: function (data, status) {
+                    if (!data.status) {
+                        alert("文件 " + file.name + " 发送失败");
+                    } else {
+                        var p = $("<p></p>");
+                        var p_time = $("<p></p>");
+                        p_time.attr("class", "time pright");
+                        p.attr("class", "pright");
+
+                        $("#display").append(p_time);
+                        $("#display").append(p);
+                        var newDate = new Date();
+                        p_time.text(formatDate(newDate));
+                        p.text("发送文件 " + file.name);
+                        show_bottom();
+                    }
+                }
+            });
+
+            // var reader = new FileReader();
+            // reader.onload = function(evt) {
+            //     buffer = evt.target.result; // ArrayBuffer
+            // };
+
+            // reader.readAsArrayBuffer(file);
+        }
+
+        return false;
+    });
+
     $("#panel2-button").click(function () {
         var old = $("#old").val();
         var new1 = $("#new1").val();
