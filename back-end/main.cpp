@@ -1,7 +1,10 @@
 #include <iostream>
+#include <fstream>
 #include <cstdlib>
 #include <map>
 #include <ctime>
+#include <algorithm>
+#include <iterator>
 #include <unistd.h>
 #include "Sqlite.h"
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
@@ -13,6 +16,8 @@
 using namespace std;
 using json = nlohmann::json;
 using namespace CryptoPP;
+
+const string saved_file_root_path = "/home/liph/code/online/front-end/saved_files";
 
 const char db_path[] = "./test.db";
 bool test_flag = false;
@@ -98,7 +103,15 @@ struct message_info {
     time_t send_time;
 };
 
+struct file_info {
+    string from;
+    string to;
+    string url;
+    time_t send_time;
+};
+
 multimap<string, message_info> message_cache;
+multimap<string, file_info> file_info_cache;
 multimap<string, string> friend_request;
 
 void print_message_cache()
@@ -397,6 +410,7 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
 
     print(name, session_id, friend_name);
     if (friend_name != "" && check_session(name, session_id) && how != -1) {
+        int index = 0;
         if (how == GET_MESSAGE_ALL) {
             Sqlite db(db_path);
             string sql = "select * from message where (name1='" + name + "' and name2='" + friend_name + 
@@ -404,17 +418,20 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
             print("sql:", sql);
             auto result = db.query(sql.c_str());
             for (int i = 1; i < result.size(); i++) {
-                ret["message"][i - 1]["name1"] = result[i][0];
-                ret["message"][i - 1]["name2"] = result[i][1];
-                ret["message"][i - 1]["message"] = result[i][2];
-                ret["message"][i - 1]["time"] = std::stoi(result[i][3]);
+                ret["message"][index]["name1"] = result[i][0];
+                ret["message"][index]["name2"] = result[i][1];
+                ret["message"][index]["message"] = result[i][2];
+                ret["message"][index]["time"] = std::stoi(result[i][3]);
+                index++;
             }
             // clear message cache
             message_cache.erase(name);
+            file_info_cache.erase(name);
         } else if (how == GET_MESSAGE_NEW) {
             bool has_new_message = false;
             int wait = 0;
             for (;;) { // 长轮询
+
                 auto pr = message_cache.equal_range(name);
                 if (pr.first != message_cache.end()) {
                     auto iter = pr.first;
@@ -422,17 +439,40 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
                     for (; iter != pr.second;) {
                         if (friend_name == iter->second.from) {
                             has_new_message = true;
-                            ret["message"][i]["name1"] = iter->second.from;
-                            ret["message"][i]["name2"] = iter->second.to;
-                            ret["message"][i]["message"] = iter->second.message;
-                            ret["message"][i]["time"] = iter->second.send_time;
+                            ret["message"][index]["name1"] = iter->second.from;
+                            ret["message"][index]["name2"] = iter->second.to;
+                            ret["message"][index]["message"] = iter->second.message;
+                            ret["message"][index]["time"] = iter->second.send_time;
                             iter = message_cache.erase(iter); // 注意迭代器失效
                             i++;
+                            index++;
                         } else {
                             iter++;
                         }
                     }
                 }
+
+                // saved file, same with message
+                auto pr2 = file_info_cache.equal_range(name);
+                if (pr2.first != file_info_cache.end()) {
+                    auto iter = pr2.first;
+                    int i = 0;
+                    for (; iter != pr2.second;) {
+                        if (friend_name == iter->second.from) {
+                            has_new_message = true;
+                            ret["message"][index]["name1"] = iter->second.from;
+                            ret["message"][index]["name2"] = iter->second.to;
+                            ret["message"][index]["message"] = iter->second.url;
+                            ret["message"][index]["time"] = iter->second.send_time;
+                            iter = file_info_cache.erase(iter);
+                            i++;
+                            index++;
+                        } else {
+                            iter++;
+                        }
+                    }
+                }
+
                 if (has_new_message) {
                     break;
                 } else { // 没有消息，阻塞
@@ -645,6 +685,59 @@ result:
     res.set_content(ret.dump(), "application/json");
 }
 
+void UploadFile(const httplib::Request &req, httplib::Response &res)
+{
+    // form-data
+    print("POST UploadFile");
+    json ret;
+    ret["status"] = false;
+
+    string name, session_id, friend_name;
+    try {
+        name = req.get_file_value("name").content;
+        session_id = req.get_file_value("session_id").content;
+        friend_name = req.get_file_value("friend_name").content;
+    } catch (exception) {
+        goto result;
+    }
+
+    if (friend_name != "" && check_session(name, session_id)) {
+        try {
+            time_t now = time(nullptr);
+            auto file = req.get_file_value("files");
+            string saved_name = name + "_" + file.filename + "_" + to_string(now);
+            ofstream saved_file(saved_file_root_path + "/" + saved_name);
+            saved_file << file.content;
+            saved_file.close();
+
+            string url = "/saved_files/" + saved_name;
+            string sql = "insert into message values('" + name + "', '" + friend_name + "', '" + 
+                url + "', " + to_string(now) + ")";
+            Sqlite db(db_path);
+            int db_ret = db.execute(sql.c_str());
+            if (db_ret != SQLITE_OK) {
+                goto result;
+            }
+
+            file_info info;
+            info.from = name;
+            info.to = friend_name;
+            info.url = url;
+            info.send_time = now;
+            file_info_cache.insert(make_pair(friend_name, info));
+        } catch (exception) {
+            goto result;
+        }
+        ret["status"] = true;
+    }
+
+    print(name, session_id, friend_name);
+
+result:
+    print(ret.dump());
+    res.set_content(ret.dump(), "application/json");
+}
+
 int main(int argc, char *argv[])
 {
     if (argc < 2) {
@@ -660,6 +753,8 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    system(("mkdir -p " + saved_file_root_path).c_str());
+
     httplib::Server svr;
 
     svr.Post("/api/register", Register);
@@ -674,6 +769,7 @@ int main(int argc, char *argv[])
     svr.Post("/api/add_friend", AddFriend);
     svr.Post("/api/apply_friend", ApplyFriend);
     svr.Post("/api/deal_friend", DealFriend);
+    svr.Post("/api/upload_file", UploadFile);
 
     svr.listen(argv[1], atoi(argv[2]));
     return 0;
