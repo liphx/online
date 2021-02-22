@@ -19,7 +19,8 @@ using json = nlohmann::json;
 using namespace CryptoPP;
 using WsServer = SimpleWeb::SocketServer<SimpleWeb::WS>;
 
-const string saved_file_root_path = "/home/liph/code/online/front-end/saved_files";
+#define CODE_ROOT_DIR "/home/liph/Code/online"
+const string saved_file_root_path = CODE_ROOT_DIR "/front-end/saved_files";
 
 const char db_path[] = "./test.db";
 bool test_flag = false;
