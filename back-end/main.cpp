@@ -12,10 +12,12 @@
 #include <cryptopp/hex.h>
 #include "third_party/cpp-httplib/httplib.h"
 #include "third_party/nlohmann/json.hpp"
+#include "third_party/websocket/server_ws.hpp"
 
 using namespace std;
 using json = nlohmann::json;
 using namespace CryptoPP;
+using WsServer = SimpleWeb::SocketServer<SimpleWeb::WS>;
 
 const string saved_file_root_path = "/home/liph/code/online/front-end/saved_files";
 
@@ -415,17 +417,29 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
             Sqlite db(db_path);
             string sql = "select * from message where (name1='" + name + "' and name2='" + friend_name + 
                 "') or (name1='" + friend_name + "' and name2='" + name + "')";
-            print("sql:", sql);
             auto result = db.query(sql.c_str());
             for (int i = 1; i < result.size(); i++) {
                 ret["message"][index]["name1"] = result[i][0];
                 ret["message"][index]["name2"] = result[i][1];
                 ret["message"][index]["message"] = result[i][2];
                 ret["message"][index]["time"] = std::stoi(result[i][3]);
+                ret["message"][index]["type"] = "message";
                 index++;
             }
             // clear message cache
             message_cache.erase(name);
+
+            sql = "select * from files where (name1='" + name + "' and name2='" + friend_name + 
+                "') or (name1='" + friend_name + "' and name2='" + name + "')";
+            result = db.query(sql.c_str());
+            for (int i = 1; i < result.size(); i++) {
+                ret["message"][index]["name1"] = result[i][0];
+                ret["message"][index]["name2"] = result[i][1];
+                ret["message"][index]["message"] = result[i][2];
+                ret["message"][index]["time"] = std::stoi(result[i][3]);
+                ret["message"][index]["type"] = "file";
+                index++;
+            }
             file_info_cache.erase(name);
         } else if (how == GET_MESSAGE_NEW) {
             bool has_new_message = false;
@@ -443,6 +457,7 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
                             ret["message"][index]["name2"] = iter->second.to;
                             ret["message"][index]["message"] = iter->second.message;
                             ret["message"][index]["time"] = iter->second.send_time;
+                            ret["message"][index]["type"] = "message";
                             iter = message_cache.erase(iter); // 注意迭代器失效
                             i++;
                             index++;
@@ -464,6 +479,7 @@ void GetMessage(const httplib::Request &req, httplib::Response &res)
                             ret["message"][index]["name2"] = iter->second.to;
                             ret["message"][index]["message"] = iter->second.url;
                             ret["message"][index]["time"] = iter->second.send_time;
+                            ret["message"][index]["type"] = "file";
                             iter = file_info_cache.erase(iter);
                             i++;
                             index++;
@@ -705,13 +721,14 @@ void UploadFile(const httplib::Request &req, httplib::Response &res)
         try {
             time_t now = time(nullptr);
             auto file = req.get_file_value("files");
-            string saved_name = name + "_" + file.filename + "_" + to_string(now);
-            ofstream saved_file(saved_file_root_path + "/" + saved_name);
+            string saved_path = saved_file_root_path + "/" + name + "/" + to_string(now);
+            system(("mkdir -p " + saved_path).c_str());
+            ofstream saved_file(saved_path + "/" + file.filename);
             saved_file << file.content;
             saved_file.close();
 
-            string url = "/saved_files/" + saved_name;
-            string sql = "insert into message values('" + name + "', '" + friend_name + "', '" + 
+            string url = "/saved_files/" + name + "/" + to_string(now) + "/" + file.filename;
+            string sql = "insert into files values('" + name + "', '" + friend_name + "', '" + 
                 url + "', " + to_string(now) + ")";
             Sqlite db(db_path);
             int db_ret = db.execute(sql.c_str());
@@ -725,6 +742,7 @@ void UploadFile(const httplib::Request &req, httplib::Response &res)
             info.url = url;
             info.send_time = now;
             file_info_cache.insert(make_pair(friend_name, info));
+            ret["url"] = url;
         } catch (exception) {
             goto result;
         }
@@ -738,6 +756,50 @@ result:
     res.set_content(ret.dump(), "application/json");
 }
 
+void video_chat(char *argv[])
+{
+    print("begin video_chat");
+    WsServer ws;
+    ws.config.port = atoi(argv[3]);
+    auto &echo = ws.endpoint["/ws-api/video_chat"];
+    echo.on_message = [](shared_ptr<WsServer::Connection> connection, shared_ptr<WsServer::InMessage> in_message) {
+        auto out_message = in_message->string();
+        cout << "Server: Message received: \"" << out_message << "\" from " << connection.get() << endl;
+        cout << "Server: Sending message \"" << out_message << "\" to " << connection.get() << endl;
+        // connection->send is an asynchronous function
+        connection->send(out_message, [](const SimpleWeb::error_code &ec) {
+            if (ec) {
+                cout << "Server: Error sending message. " << "Error: " << ec << ", error message: " << ec.message() << endl;
+            }
+        });
+    };
+
+    echo.on_open = [](shared_ptr<WsServer::Connection> connection) {
+        cout << "Server: Opened connection " << connection.get() << endl;
+    };
+
+    echo.on_close = [](shared_ptr<WsServer::Connection> connection, int status, const string &) {
+        cout << "Server: Closed connection " << connection.get() << " with status code " << status << endl;
+    };
+
+    echo.on_handshake = [](shared_ptr<WsServer::Connection> /*connection*/, SimpleWeb::CaseInsensitiveMultimap & /*response_header*/) {
+        return SimpleWeb::StatusCode::information_switching_protocols; // Upgrade to websocket
+    };
+
+    echo.on_error = [](shared_ptr<WsServer::Connection> connection, const SimpleWeb::error_code &ec) {
+        cout << "Server: Error in connection " << connection.get() << ". "
+            << "Error: " << ec << ", error message: " << ec.message() << endl;
+    };
+    promise<unsigned short> server_port;
+    thread server_thread([&ws, &server_port]() {
+        ws.start([&server_port](unsigned short port) {
+            server_port.set_value(port);
+        });
+    });
+    cout << "Server listening on port " << server_port.get_future().get() << endl;
+    server_thread.join();
+}
+
 int main(int argc, char *argv[])
 {
     if (argc < 2) {
@@ -749,6 +811,12 @@ int main(int argc, char *argv[])
 
     pthread_t newthread;
     if (pthread_create(&newthread , NULL, (void *(*)(void *))clear_session, NULL) != 0) {
+        cerr << "pthread_create error" << endl;
+        exit(1);
+    }
+
+    pthread_t newthread2;
+    if (pthread_create(&newthread2 , NULL, (void *(*)(void *))video_chat, argv) != 0) {
         cerr << "pthread_create error" << endl;
         exit(1);
     }
