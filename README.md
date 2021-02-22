@@ -1,30 +1,55 @@
-# onlineChatSystem
+# online
 
-## 用到的库
+## 参考
 
 * http <https://github.com/yhirose/cpp-httplib>
+* websocket <https://gitlab.com/eidheim/Simple-WebSocket-Server>
 * 数据库 <https://sqlite.org/index.html>
 * JSON <https://github.com/nlohmann/json>
 * 加密库 <https://www.cryptopp.com>
 * 前端 <https://jquery.com>
+* WebRTC <https://github.com/shushushv/webrtc-p2p>
 
-## todo
+## 部署
 
-* sql 目前采用拼接的方式，需加fmt
-* 数据校验
+nginx 反向代理 `/etc/nginx/sites-enabled/test-pages`
 
-## DB 
+```nginx
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
 
-```sql
-DROP TABLE IF EXISTS user;
-create table IF NOT EXISTS user(name string, passwd string, email string, PRIMARY KEY (name));
-delete from user;
+upstream websocket {
+    server localhost:9002;
+}
 
-DROP TABLE IF EXISTS friends;
-create table IF NOT EXISTS friends(name1 string, name2 string, PRIMARY KEY (name1, name2));
-delete from friends;
+server {
+    listen 9000;
+    server_name localhost;
+    
+    location / {
+    root ${code-dir}/front-end;
+        index index.html;
+        charset utf-8;
+    }
 
-DROP TABLE IF EXISTS message;
-create table IF NOT EXISTS message(name1 string, name2 string, message string, time int);
-delete from message;
+    location /api/ {
+        proxy_pass http://localhost:9001;
+    }
+
+    location /ws-api/ {
+        proxy_pass http://websocket;
+        proxy_read_timeout 300s;
+        proxy_send_timeout 300s;
+        
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+    }
+}
 ```
