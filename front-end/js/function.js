@@ -75,6 +75,7 @@ function get_fri() {
             fl.empty();
             for (var i = 0; i < j.length; i++) {
                 var name = j[i];
+                sessionStorage.friend_name = name;
                 var b = $("<button onclick=show(\'" + name + "\')></button>");
 
                 fl.append(b);
@@ -162,6 +163,10 @@ $(document).ready(function () {
                     if (!data.status) {
                         alert("文件 " + file.name + " 发送失败");
                     } else {
+                        var url = data.url;
+                        var s = url.split('/');
+                        var filename = s[s.length - 1];
+
                         var p = $("<p></p>");
                         var p_time = $("<p></p>");
                         p_time.attr("class", "time pright");
@@ -171,7 +176,11 @@ $(document).ready(function () {
                         $("#display").append(p);
                         var newDate = new Date();
                         p_time.text(formatDate(newDate));
-                        p.text("发送文件 " + file.name);
+                        p.text("发送文件 ");
+                        var a = $("<a></a>");
+                        a.attr("href", url);
+                        a.text(filename);
+                        p.append(a);
                         show_bottom();
                     }
                 }
@@ -289,31 +298,48 @@ function get_message(name, how) {
             }
             
             for (var i in result) {
-                var p = $("<p></p>");
-                var p_time = $("<p></p>");
-                if (result[i]["name1"] == name) {
-                    p.attr("class", "pleft");
-                    p_time.attr("class", "time pleft");
-                }
-                else {
-                    p.attr("class", "pright");
-                    p_time.attr("class", "time pright");
-                }
-
+                var name1 = result[i]["name1"];
+                var name2 = result[i]["name2"];
                 var send_time = result[i]["time"];
-                var message = result[i]["message"];
+                var message_type = result[i]["type"];
 
-                var newDate = new Date();
-                newDate.setTime(send_time * 1000);
-                
+                var p_time = $("<p></p>");
+                var p = $("<p></p>");
+                if (name == name1) {
+                    p_time.attr("class", "time pleft");
+                    p.attr("class", "pleft");
+                } else {
+                    p_time.attr("class", "time pright");
+                    p.attr("class", "pright");
+                }
                 $("#display").append(p_time);
                 $("#display").append(p);
+                var newDate = new Date();
+                newDate.setTime(send_time * 1000);
                 p_time.text(formatDate(newDate));
-                p.text(message);
 
+                if (message_type == "message") {
+                    var message = result[i]["message"];
+                    p.text(message);
+                } else if (message_type == "file") {
+                    var url = result[i]["message"];
+                    var s = url.split('/');
+                    var filename = s[s.length - 1];
+                    if (name == name1) {
+                        p.text('收到文件 ');
+                    } else {
+                        p.text('发送文件 ');
+                    }
+                    var a = $("<a></a>");
+                    a.attr("href", url);
+                    a.text(filename);
+                    p.append(a);
+                }
                 show_bottom();
             }
-            setTimeout(get_message(name, 1), 1000);
+            if (name == sessionStorage.friend_name) {
+                setTimeout(get_message(name, 1), 1000);
+            }
         }
         
     );
