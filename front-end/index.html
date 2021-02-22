@@ -137,15 +137,15 @@
                     <form id=reply style="width:100%; height: 100%; margin: 0; padding: 0;">
                         <p style="height: 20%; margin: 0; padding: 0;">输入要发送的消息</p>
                         <textarea id="reply-text" rows="5" cols="70"
-                            style="width:100%; height: 50%; margin: 0; padding: 0;"></textarea>
-                         
-                        <div>
-                            <input type="file" id="file" multiple>
-                            <input value="upload" type="submit" id="upload">
-                        </div>
+                            style="width:100%; height: 50%; margin: 0; padding: 0;">
+                        </textarea>
 
-                        <div style="height: 20%; margin: 0; padding: 0; text-align: right;"> <input type="submit"
-                                id="panel5-button" value="发送" /></div>
+                        <div style="height: 20%; margin: 0; padding: 0">
+                            <input type="file" id="file" multiple />
+                            <input type="submit" value="发送文件" id="upload" />
+                            <input type="button" value="发起视频聊天" onclick="window.open('video.html')" />
+                            <input type="submit" value="发送消息" id="panel5-button" />
+                        </div>
                     </form>
                 </div>
             </div>
