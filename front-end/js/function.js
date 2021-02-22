@@ -292,9 +292,11 @@ function get_message(name, how) {
     post_get_message(sessionStorage.userName, sessionStorage.session_id,
         name, how, function (data, status) {
             var result = data["message"];
-            result.sort(function(a, b) {
-                return a.time > b.time;
-            });
+            if (result != null) {
+                result.sort(function(a, b) {
+                    return a.time > b.time;
+                });
+            }
 
             console.log(result);
             if (how == 0) {
