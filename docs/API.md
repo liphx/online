@@ -1,14 +1,17 @@
 ## API
 
-* /api/register { "name":STRING, "passwd":STRING, "email":STRING } => { "status": BOOL }
-* /api/login { "name":STRING, "passwd":STRING } => { "status": BOOL, "session_id": STRING }
-* /api/islogin { "name":STRING, "session_id": STRING } => { "status": BOOL }
-* /api/information { "name":STRING, "session_id": STRING } => { "information": { "name":STRING, "email":STRING } }
-* /api/alter_password { "name":STRING, "session_id": STRING, "old_passwd": STRING, "new_passwd": STRING } => { "status": BOOL }
-* /api/alter_information { "name":STRING, "session_id": STRING, "email": STRING } => { "status": BOOL }
-* /api/get_friends { "name":STRING, "session_id": STRING } => { "friends": LIST }
-* /api/get_message { "name":STRING, "session_id": STRING, "friend_name": STRING, "how": INT } => { "message": LIST }
-* /api/send_message { "name":STRING, "session_id": STRING, "friend_name": STRING, "message": STRING } => { "status": BOOL }
-* /api/add_friend { "name":STRING, "session_id": STRING, "friend_name": STRING } => { "status": BOOL }
-* /api/apply_friend { "name":STRING, "session_id": STRING } => { "request": LIST }
-* /api/deal_friend { "name":STRING, "session_id": STRING, "friend_name": STRING, "agree": STRING } => { "status": BOOL }
+| method | url | parameters | type | Responses | type |
+| -- | -- | -- | -- | -- | -- |
+| post | /api/register          | { "name": string, "passwd": string, "email": string } | json | { "status": bool } | json |
+| post | /api/login             | { "name": string, "passwd": string } | json | { "status": bool, "session_id": string } | json |
+| post | /api/islogin           | { "name": string, "session_id": string } | json | { "status": bool } | json |
+| post | /api/information       | { "name": string, "session_id": string } | json | { "information": { "name": string, "email": string } } | json |
+| post | /api/alter_password    | { "name": string, "session_id": string, "old_passwd": string, "new_passwd": string } | json | { "status": bool } | json
+| post | /api/alter_information | { "name": string, "session_id": string, "email": string } | json | { "status": bool } | json
+| post | /api/get_friends       | { "name": string, "session_id": string } | json | { "friends": [ string ] } | json
+| post | /api/get_message       | { "name": string, "session_id": string, "friend_name": string, "how": int } | json | { "message": [ { "message" : string, type: string, "name1": string, "name2": string, "time": int } ] } | json
+| post | /api/send_message      | { "name": string, "session_id": string, "friend_name": string, "message": string } | json | { "status": bool } | json
+| post | /api/add_friend        | { "name": string, "session_id": string, "friend_name": string } | json | { "status": bool } | json
+| post | /api/apply_friend      | { "name": string, "session_id": string } | json | { "request": [ string ] } | json
+| post | /api/deal_friend       | { "name": string, "session_id": string, "friend_name": string, "agree": bool } | json | { "status": bool } | json
+| post | /api/upload_file       | { "name": string, "session_id": string, "friend_name": string, "files": file } | form-data | { "status": bool, "url": string } | json |
