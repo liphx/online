@@ -294,7 +294,7 @@ function get_message(name, how) {
             var result = data["message"];
             if (result != null) {
                 result.sort(function(a, b) {
-                    return a.time > b.time;
+                    return a.time - b.time;
                 });
             }
 
