@@ -1,7 +1,7 @@
 all:main
 
 main:main.cpp Sqlite.o httplib.o
-	gcc -o main main.cpp Sqlite.o httplib.o -lpthread -lstdc++ -lsqlite3 -lcryptopp -lcrypto -lm -std=c++11
+	gcc -o main main.cpp Sqlite.o httplib.o -lpthread -lstdc++ -lsqlite3 -lcryptopp -lcrypto -lm
 
 Sqlite.o:Sqlite.cpp Sqlite.h
 	gcc -c Sqlite.cpp
