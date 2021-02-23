@@ -7,6 +7,7 @@
 #include <iterator>
 #include <unistd.h>
 #include "Sqlite.h"
+#include "timer.h"
 #define CRYPTOPP_ENABLE_NAMESPACE_WEAK 1
 #include <cryptopp/md5.h>
 #include <cryptopp/hex.h>
@@ -71,9 +72,6 @@ string md5(string msg)
     return out;
 }
 
-int session_timeout = 20 * 60; // 20 mins
-int clear_session_interval = 10 * 60;
-
 struct session_info {
     string session_id;
     time_t create_time;
@@ -81,22 +79,28 @@ struct session_info {
 
 map<string, session_info> session;
 
-void clear_session()
+void clear_session(void *args)
 {
-    for (;;) {
-        for (auto it = session.begin(); it != session.end(); ) {
-            string name = it->first;
-            session_info info = it->second;
-            time_t now = time(nullptr);
-            if (now - info.create_time >= session_timeout) {
-                print(name, "timeout");
-                session.erase(it++);
-            } else {
-                it++;
-            }
+    int session_timeout = 20 * 60; // 20 mins
+    for (auto it = session.begin(); it != session.end(); ) {
+        string name = it->first;
+        session_info info = it->second;
+        time_t now = time(nullptr);
+        if (now - info.create_time >= session_timeout) {
+            print(name, "timeout");
+            session.erase(it++);
+        } else {
+            it++;
         }
-        sleep(clear_session_interval);
-    }
+    }  
+}
+
+void clear_file(void *args)
+{
+    // 文件设置7天过期
+    string cmd = string("find ") + saved_file_root_path + "/* -mtime +7 -exec rm -vrf {} \\;";
+    print(cmd);
+    system(cmd.c_str());
 }
 
 struct message_info {
@@ -810,19 +814,20 @@ int main(int argc, char *argv[])
         test_flag = true;
     }
 
-    pthread_t newthread;
-    if (pthread_create(&newthread , NULL, (void *(*)(void *))clear_session, NULL) != 0) {
-        cerr << "pthread_create error" << endl;
-        exit(1);
-    }
+    system(("mkdir -p " + saved_file_root_path).c_str());
+
+    Timer timer;
+    int clear_session_interval = 10 * 60;       // 10 mins
+    int clear_file_interval = 24 * 60 * 60;     // 1 day
+    timer.AddJob(clear_session, clear_session_interval, nullptr);
+    timer.AddJob(clear_file, clear_file_interval, nullptr);
+    pthread_t timer_tid = timer.start();
 
     pthread_t newthread2;
     if (pthread_create(&newthread2 , NULL, (void *(*)(void *))video_chat, argv) != 0) {
         cerr << "pthread_create error" << endl;
         exit(1);
     }
-
-    system(("mkdir -p " + saved_file_root_path).c_str());
 
     httplib::Server svr;
 
